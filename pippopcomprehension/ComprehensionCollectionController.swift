@@ -64,6 +64,20 @@ class ComprehensionCollectionController: UICollectionViewController{
         return cell
     }
     
+    override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        var vc: ComprehensionMenuController = self.storyboard?.instantiateViewControllerWithIdentifier("ComprehensionMenuID") as! ComprehensionMenuController
+        var rData = totalData[indexPath.row]["pages"] as! NSArray
+        var qData = totalData[indexPath.row]["questions"] as! NSArray
+        println("Reading data is \(rData).")
+        println("Question data is \(qData).")
+        vc.readingData = rData
+        vc.questionsData = qData
+        var urlImageLocal: NSString = totalData[indexPath.row]["url_image_local"] as! NSString
+        var filePath = Utility.createFilePathInDocsDir(urlImageLocal as String)
+        vc.urlImgLocal = filePath
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
     func loadData() {
         self.ActivitySpinner.hidden = false
         self.ActivitySpinner.startAnimating()
@@ -74,9 +88,9 @@ class ComprehensionCollectionController: UICollectionViewController{
         if fileExists {
             println("File exists...")
             var data = Utility.loadJSONDataAtFilePath(filePath)
-            let exps = data["digitalexperiences"] as! NSArray
+            let exps = data["comprehensions"] as! NSArray
             self.totalData = exps
-            println("Number of experiences is \(exps.count)")
+            println("Number of comps is \(exps.count)")
             
             for exp in exps{
                 //                println(exp)
@@ -123,8 +137,7 @@ class ComprehensionCollectionController: UICollectionViewController{
             }
         }
         task.resume()
-    }
-    
+    }    
     
     
     func writeImagesLocally(dataInput: NSDictionary) {
@@ -166,10 +179,8 @@ class ComprehensionCollectionController: UICollectionViewController{
                 } else {
                     println("remote Image filename empty")
                 }
-                
             }
         }
-
     }
 
     
