@@ -50,6 +50,7 @@ class QuestionViewController: UIViewController {
         self.Answer2Label.hidden = true
         self.Answer3Label.hidden = true
         self.QuestionImage.hidden = true
+        self.QuestionLabel.hidden = true
         self.EndQuizLabel.hidden = false
     }
     
@@ -72,15 +73,28 @@ class QuestionViewController: UIViewController {
             var goodAnswer = thisQuestion["correct_answer"] as! String
             var badAnswer1 = thisQuestion["incorrect_answer_1"] as! String
             var badAnswer2 = thisQuestion["incorrect_answer_2"] as! String
+            var question = thisQuestion["sentence"] as! String
+            self.QuestionLabel.text = question
             self.answers = []
             self.answers.append(goodAnswer)
             self.answers.append(badAnswer1)
             self.answers.append(badAnswer2)
             var newAnswers = Utility.shuffle(self.answers)
+            
             self.correctAnswer = goodAnswer
             self.Answer1Label.setTitle(newAnswers[0], forState: .Normal)
             self.Answer2Label.setTitle(newAnswers[1], forState: .Normal)
             self.Answer3Label.setTitle(newAnswers[2], forState: .Normal)
+            var urlImageLocal: NSString = thisQuestion["url_image_local"] as! NSString
+            var filePath = Utility.createFilePathInDocsDir(urlImageLocal as String)
+            var fileExists = Utility.checkIfFileExistsAtPath(filePath)
+            if fileExists == true {
+                println("Image is present called \(filePath)")
+                self.QuestionImage.image = UIImage(named: filePath)
+            } else {
+                println("Unable to find image. Will write to write from network")
+                writeImagesLocally(thisQuestion)
+            }
         } else {
             println("It is the end!")
         }
@@ -122,6 +136,50 @@ class QuestionViewController: UIViewController {
         println("Ending quiz")
 
     }
+    
+    func writeImagesLocally(dataInput: NSDictionary) {
+        var localImageFilename: NSString?
+        localImageFilename = dataInput["url_image_local"] as? NSString
+        var remoteImageFilename: NSString?
+        remoteImageFilename = dataInput["url_image_remote"] as? NSString
+        println("Remote image filename \(remoteImageFilename)")
+        if let ImgLocal = localImageFilename {
+            var imgPathAsString: String = ImgLocal as! String
+            var imgPathAsStringExtra = Utility.createFilePathInDocsDir(imgPathAsString)
+            println("Inside image local. \(imgPathAsStringExtra)")
+            var fileExists = Utility.checkIfFileExistsAtPath(imgPathAsStringExtra)
+            if fileExists == true {
+                println("Local file exists at \(imgPathAsStringExtra)")
+            } else {
+                println("Local file does not exist. Was named \(ImgLocal). About to get remote url and pull from network")
+                if let ImgRemote: NSString = remoteImageFilename {
+                    println("Network location is \(ImgRemote)")
+                    let URL = NSURL(string: ImgRemote as String)
+                    println("Converted string to URL")
+                    let qos = Int(QOS_CLASS_USER_INITIATED.value)
+                    println("About to run async off main queue")
+                    dispatch_async(dispatch_get_global_queue(qos, 0)){() -> Void in
+                        let imageData = NSData(contentsOfURL: URL!)
+                        println("Got image data. About to write it")
+                        var localPath:NSString = Utility.documentsPathForFileName(ImgLocal as String)
+                        imageData!.writeToFile(localPath as String, atomically: true)
+                        println("Written image as data to \(localPath)")
+                        dispatch_async(dispatch_get_main_queue()){
+                            if Utility.checkIfFileExistsAtPath(localPath as String) == true {
+                                println("File does exist. Reloading collection table")
+                                self.QuestionImage.image = UIImage(named: localPath as String)
+                            } else {
+                                println("No luck with image local or remote")
+                            }
+                        }
+                    }
+                } else {
+                    println("remote Image filename empty")
+                }
+            }
+        }
+    }
+
     
     
 }

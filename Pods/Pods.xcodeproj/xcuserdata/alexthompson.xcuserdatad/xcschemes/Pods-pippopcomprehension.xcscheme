@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5ABFACABD507DD1C82700E46"
+               BlueprintIdentifier = "0C30F5A9687E3C6354E8C947"
                BuildableName = "libPods-pippopcomprehension.a"
                BlueprintName = "Pods-pippopcomprehension"
                ReferencedContainer = "container:Pods.xcodeproj">
