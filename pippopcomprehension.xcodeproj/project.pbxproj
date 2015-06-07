@@ -1,0 +1,503 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C63EF783ED9EACBD97700DE1 /* libPods-pippopcomprehension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 29CCF67BFF69CBA824F46282 /* libPods-pippopcomprehension.a */; };
+		D5BF26771B246D8C005B7B36 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BF26761B246D8C005B7B36 /* AppDelegate.swift */; };
+		D5BF267C1B246D8C005B7B36 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D5BF267A1B246D8C005B7B36 /* Main.storyboard */; };
+		D5BF267E1B246D8C005B7B36 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D5BF267D1B246D8C005B7B36 /* Images.xcassets */; };
+		D5BF26811B246D8C005B7B36 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D5BF267F1B246D8C005B7B36 /* LaunchScreen.xib */; };
+		D5BF268D1B246D8C005B7B36 /* pippopcomprehensionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BF268C1B246D8C005B7B36 /* pippopcomprehensionTests.swift */; };
+		D5BF26971B246EE7005B7B36 /* ComprehensionCollectionCellController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BF26961B246EE7005B7B36 /* ComprehensionCollectionCellController.swift */; };
+		D5BF269D1B247170005B7B36 /* ComprehensionCollectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BF269C1B247170005B7B36 /* ComprehensionCollectionController.swift */; };
+		D5BF269F1B248B29005B7B36 /* Utililty.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BF269E1B248B29005B7B36 /* Utililty.swift */; };
+		D5BF26A11B248B40005B7B36 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BF26A01B248B40005B7B36 /* Constants.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		D5BF26871B246D8C005B7B36 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D5BF26691B246D8C005B7B36 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = D5BF26701B246D8C005B7B36;
+			remoteInfo = pippopcomprehension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		29CCF67BFF69CBA824F46282 /* libPods-pippopcomprehension.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-pippopcomprehension.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		47417A128AF279F8A4BB0983 /* Pods-pippopcomprehension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pippopcomprehension.debug.xcconfig"; path = "Pods/Target Support Files/Pods-pippopcomprehension/Pods-pippopcomprehension.debug.xcconfig"; sourceTree = "<group>"; };
+		C844CD6835F9C991BED6BBA9 /* Pods-pippopcomprehension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pippopcomprehension.release.xcconfig"; path = "Pods/Target Support Files/Pods-pippopcomprehension/Pods-pippopcomprehension.release.xcconfig"; sourceTree = "<group>"; };
+		D5BF26711B246D8C005B7B36 /* pippopcomprehension.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pippopcomprehension.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5BF26751B246D8C005B7B36 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D5BF26761B246D8C005B7B36 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		D5BF267B1B246D8C005B7B36 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		D5BF267D1B246D8C005B7B36 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		D5BF26801B246D8C005B7B36 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		D5BF26861B246D8C005B7B36 /* pippopcomprehensionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = pippopcomprehensionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D5BF268B1B246D8C005B7B36 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D5BF268C1B246D8C005B7B36 /* pippopcomprehensionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = pippopcomprehensionTests.swift; sourceTree = "<group>"; };
+		D5BF26961B246EE7005B7B36 /* ComprehensionCollectionCellController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComprehensionCollectionCellController.swift; sourceTree = "<group>"; };
+		D5BF269C1B247170005B7B36 /* ComprehensionCollectionController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComprehensionCollectionController.swift; sourceTree = "<group>"; };
+		D5BF269E1B248B29005B7B36 /* Utililty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utililty.swift; sourceTree = "<group>"; };
+		D5BF26A01B248B40005B7B36 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D5BF266E1B246D8C005B7B36 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C63EF783ED9EACBD97700DE1 /* libPods-pippopcomprehension.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5BF26831B246D8C005B7B36 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A50067813E1DE297FFB5057A /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				47417A128AF279F8A4BB0983 /* Pods-pippopcomprehension.debug.xcconfig */,
+				C844CD6835F9C991BED6BBA9 /* Pods-pippopcomprehension.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		D5BF26681B246D8C005B7B36 = {
+			isa = PBXGroup;
+			children = (
+				D5BF26731B246D8C005B7B36 /* pippopcomprehension */,
+				D5BF26891B246D8C005B7B36 /* pippopcomprehensionTests */,
+				D5BF26721B246D8C005B7B36 /* Products */,
+				A50067813E1DE297FFB5057A /* Pods */,
+				F724447DC97647B980046A91 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		D5BF26721B246D8C005B7B36 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D5BF26711B246D8C005B7B36 /* pippopcomprehension.app */,
+				D5BF26861B246D8C005B7B36 /* pippopcomprehensionTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		D5BF26731B246D8C005B7B36 /* pippopcomprehension */ = {
+			isa = PBXGroup;
+			children = (
+				D5BF267A1B246D8C005B7B36 /* Main.storyboard */,
+				D5BF269C1B247170005B7B36 /* ComprehensionCollectionController.swift */,
+				D5BF26961B246EE7005B7B36 /* ComprehensionCollectionCellController.swift */,
+				D5BF26741B246D8C005B7B36 /* Supporting Files */,
+			);
+			path = pippopcomprehension;
+			sourceTree = "<group>";
+		};
+		D5BF26741B246D8C005B7B36 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D5BF267D1B246D8C005B7B36 /* Images.xcassets */,
+				D5BF267F1B246D8C005B7B36 /* LaunchScreen.xib */,
+				D5BF26761B246D8C005B7B36 /* AppDelegate.swift */,
+				D5BF26A01B248B40005B7B36 /* Constants.swift */,
+				D5BF269E1B248B29005B7B36 /* Utililty.swift */,
+				D5BF26751B246D8C005B7B36 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		D5BF26891B246D8C005B7B36 /* pippopcomprehensionTests */ = {
+			isa = PBXGroup;
+			children = (
+				D5BF268C1B246D8C005B7B36 /* pippopcomprehensionTests.swift */,
+				D5BF268A1B246D8C005B7B36 /* Supporting Files */,
+			);
+			path = pippopcomprehensionTests;
+			sourceTree = "<group>";
+		};
+		D5BF268A1B246D8C005B7B36 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				D5BF268B1B246D8C005B7B36 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F724447DC97647B980046A91 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				29CCF67BFF69CBA824F46282 /* libPods-pippopcomprehension.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D5BF26701B246D8C005B7B36 /* pippopcomprehension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D5BF26901B246D8C005B7B36 /* Build configuration list for PBXNativeTarget "pippopcomprehension" */;
+			buildPhases = (
+				5B41890B12E9B8324E75A82B /* Check Pods Manifest.lock */,
+				D5BF266D1B246D8C005B7B36 /* Sources */,
+				D5BF266E1B246D8C005B7B36 /* Frameworks */,
+				D5BF266F1B246D8C005B7B36 /* Resources */,
+				5EF363F5A4A9A9B6A1BE61F4 /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = pippopcomprehension;
+			productName = pippopcomprehension;
+			productReference = D5BF26711B246D8C005B7B36 /* pippopcomprehension.app */;
+			productType = "com.apple.product-type.application";
+		};
+		D5BF26851B246D8C005B7B36 /* pippopcomprehensionTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D5BF26931B246D8C005B7B36 /* Build configuration list for PBXNativeTarget "pippopcomprehensionTests" */;
+			buildPhases = (
+				D5BF26821B246D8C005B7B36 /* Sources */,
+				D5BF26831B246D8C005B7B36 /* Frameworks */,
+				D5BF26841B246D8C005B7B36 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D5BF26881B246D8C005B7B36 /* PBXTargetDependency */,
+			);
+			name = pippopcomprehensionTests;
+			productName = pippopcomprehensionTests;
+			productReference = D5BF26861B246D8C005B7B36 /* pippopcomprehensionTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D5BF26691B246D8C005B7B36 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0630;
+				ORGANIZATIONNAME = "Alex Thompson";
+				TargetAttributes = {
+					D5BF26701B246D8C005B7B36 = {
+						CreatedOnToolsVersion = 6.3.2;
+					};
+					D5BF26851B246D8C005B7B36 = {
+						CreatedOnToolsVersion = 6.3.2;
+						TestTargetID = D5BF26701B246D8C005B7B36;
+					};
+				};
+			};
+			buildConfigurationList = D5BF266C1B246D8C005B7B36 /* Build configuration list for PBXProject "pippopcomprehension" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D5BF26681B246D8C005B7B36;
+			productRefGroup = D5BF26721B246D8C005B7B36 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D5BF26701B246D8C005B7B36 /* pippopcomprehension */,
+				D5BF26851B246D8C005B7B36 /* pippopcomprehensionTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D5BF266F1B246D8C005B7B36 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5BF267C1B246D8C005B7B36 /* Main.storyboard in Resources */,
+				D5BF26811B246D8C005B7B36 /* LaunchScreen.xib in Resources */,
+				D5BF267E1B246D8C005B7B36 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5BF26841B246D8C005B7B36 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5B41890B12E9B8324E75A82B /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		5EF363F5A4A9A9B6A1BE61F4 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-pippopcomprehension/Pods-pippopcomprehension-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D5BF266D1B246D8C005B7B36 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5BF26A11B248B40005B7B36 /* Constants.swift in Sources */,
+				D5BF269D1B247170005B7B36 /* ComprehensionCollectionController.swift in Sources */,
+				D5BF269F1B248B29005B7B36 /* Utililty.swift in Sources */,
+				D5BF26971B246EE7005B7B36 /* ComprehensionCollectionCellController.swift in Sources */,
+				D5BF26771B246D8C005B7B36 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D5BF26821B246D8C005B7B36 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5BF268D1B246D8C005B7B36 /* pippopcomprehensionTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D5BF26881B246D8C005B7B36 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = D5BF26701B246D8C005B7B36 /* pippopcomprehension */;
+			targetProxy = D5BF26871B246D8C005B7B36 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		D5BF267A1B246D8C005B7B36 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D5BF267B1B246D8C005B7B36 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		D5BF267F1B246D8C005B7B36 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D5BF26801B246D8C005B7B36 /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D5BF268E1B246D8C005B7B36 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D5BF268F1B246D8C005B7B36 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.3;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		D5BF26911B246D8C005B7B36 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 47417A128AF279F8A4BB0983 /* Pods-pippopcomprehension.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = pippopcomprehension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		D5BF26921B246D8C005B7B36 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C844CD6835F9C991BED6BBA9 /* Pods-pippopcomprehension.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = pippopcomprehension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		D5BF26941B246D8C005B7B36 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = pippopcomprehensionTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/pippopcomprehension.app/pippopcomprehension";
+			};
+			name = Debug;
+		};
+		D5BF26951B246D8C005B7B36 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = pippopcomprehensionTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/pippopcomprehension.app/pippopcomprehension";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D5BF266C1B246D8C005B7B36 /* Build configuration list for PBXProject "pippopcomprehension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5BF268E1B246D8C005B7B36 /* Debug */,
+				D5BF268F1B246D8C005B7B36 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D5BF26901B246D8C005B7B36 /* Build configuration list for PBXNativeTarget "pippopcomprehension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5BF26911B246D8C005B7B36 /* Debug */,
+				D5BF26921B246D8C005B7B36 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D5BF26931B246D8C005B7B36 /* Build configuration list for PBXNativeTarget "pippopcomprehensionTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5BF26941B246D8C005B7B36 /* Debug */,
+				D5BF26951B246D8C005B7B36 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D5BF26691B246D8C005B7B36 /* Project object */;
+}
