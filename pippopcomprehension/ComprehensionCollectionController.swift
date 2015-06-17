@@ -75,7 +75,7 @@ class ComprehensionCollectionController: UICollectionViewController{
         var urlImageLocal: NSString = totalData[indexPath.row]["url_image_local"] as! NSString
         var filePath = Utility.createFilePathInDocsDir(urlImageLocal as String)
         vc.urlImgLocal = filePath
-        self.navigationController?.pushViewController(vc, animated: true)
+        self.presentViewController(vc, animated: true, completion: nil)
     }
     
     func loadData() {

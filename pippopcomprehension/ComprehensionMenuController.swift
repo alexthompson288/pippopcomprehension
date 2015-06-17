@@ -23,16 +23,21 @@ class ComprehensionMenuController: UIViewController {
         self.ComprehensionImage.image = UIImage(named: urlImgLocal)
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "MenuToReadingSegue" {
-            println("Setting data before sgue to menu to reading")
-            var vc:ReadingContentController = segue.destinationViewController as! ReadingContentController
-            vc.activityData = readingData
-        } else if segue.identifier == "MenuToQuestionsSegue" {
-            println("Setting data before sgue to questions")
-            var vc:QuestionViewController = segue.destinationViewController as! QuestionViewController
-            vc.qData = questionsData
-        }
+    
+    @IBAction func GoToQuizButton(sender: AnyObject) {
+        var vc:QuestionViewController = self.storyboard?.instantiateViewControllerWithIdentifier("QuizID") as! QuestionViewController
+        vc.qData = questionsData
+        self.presentViewController(vc, animated: true, completion: nil)
     }
     
+    @IBAction func GoToReadingButton(sender: AnyObject) {
+        var vc:ReadingContentController = self.storyboard?.instantiateViewControllerWithIdentifier("ReadingContentID") as! ReadingContentController
+        vc.activityData = readingData
+        self.presentViewController(vc, animated: true, completion: nil)
+    }
+    
+    @IBAction func BackButton(sender: AnyObject) {
+        var vc:ComprehensionCollectionController = self.storyboard?.instantiateViewControllerWithIdentifier("ComprehensionCollectionID") as! ComprehensionCollectionController
+        self.presentViewController(vc, animated: true, completion: nil)
+    }
 }

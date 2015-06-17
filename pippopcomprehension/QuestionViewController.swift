@@ -32,8 +32,12 @@ class QuestionViewController: UIViewController {
     
     @IBOutlet weak var ScoreLabel: UILabel!
     
+    @IBOutlet weak var EndOfQuizView: UIView!
+    
+    @IBOutlet weak var EndOfQuizScoreLabel: UILabel!
+    
     override func viewDidLoad() {
-        self.EndQuizLabel.hidden = true
+        self.EndOfQuizView.hidden = true
         totalQ = self.qData.count
         updateUI()
         println("Quesiton VC loaded")
@@ -46,12 +50,13 @@ class QuestionViewController: UIViewController {
     }
     
     func endQuiz(){
+        self.EndOfQuizScoreLabel.text = "\(self.score)/\(self.totalQ)"
         self.Answer1Label.hidden = true
         self.Answer2Label.hidden = true
         self.Answer3Label.hidden = true
         self.QuestionImage.hidden = true
         self.QuestionLabel.hidden = true
-        self.EndQuizLabel.hidden = false
+        self.EndOfQuizView.hidden = false
     }
     
     func checkIfEnd() -> Bool{

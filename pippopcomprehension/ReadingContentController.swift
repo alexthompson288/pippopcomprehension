@@ -40,6 +40,11 @@ class ReadingContentController: UIViewController, UIPageViewControllerDataSource
         
     }
     
+    @IBAction func BackToComprehensionsButton(sender: AnyObject) {
+        var vc:ComprehensionCollectionController = self.storyboard?.instantiateViewControllerWithIdentifier("ComprehensionCollectionID") as! ComprehensionCollectionController
+        self.presentViewController(vc, animated: true, completion: nil)
+    }
+    
     override func didReceiveMemoryWarning() {
         println("Memory Warning")
     }
