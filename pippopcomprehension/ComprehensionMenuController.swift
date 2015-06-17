@@ -12,15 +12,18 @@ import UIKit
 class ComprehensionMenuController: UIViewController {
     
     var urlImgLocal = ""
+    var titleLabelText = ""
     var readingData = NSArray()
     var questionsData = NSArray()
     
     @IBOutlet weak var ComprehensionImage: UIImageView!
+    @IBOutlet weak var TitleLabel: UILabel!
     
     override func viewDidLoad() {
         println("Menu VC loaded.")
         println("Url image local is \(urlImgLocal)")
         self.ComprehensionImage.image = UIImage(named: urlImgLocal)
+        self.TitleLabel.text = titleLabelText
     }
     
     
@@ -37,7 +40,7 @@ class ComprehensionMenuController: UIViewController {
     }
     
     @IBAction func BackButton(sender: AnyObject) {
-        var vc:ComprehensionCollectionController = self.storyboard?.instantiateViewControllerWithIdentifier("ComprehensionCollectionID") as! ComprehensionCollectionController
+        var vc:ComprehensionsIndexController = self.storyboard?.instantiateViewControllerWithIdentifier("ComprehensionsIndexID") as! ComprehensionsIndexController
         self.presentViewController(vc, animated: true, completion: nil)
     }
 }

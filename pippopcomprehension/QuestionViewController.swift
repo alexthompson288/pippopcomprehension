@@ -139,6 +139,8 @@ class QuestionViewController: UIViewController {
     
     @IBAction func EndQuiz(sender: AnyObject) {
         println("Ending quiz")
+        var vc: ComprehensionsIndexController = self.storyboard?.instantiateViewControllerWithIdentifier("ComprehensionsIndexID") as! ComprehensionsIndexController
+        self.presentViewController(vc, animated: true, completion: nil)
 
     }
     
