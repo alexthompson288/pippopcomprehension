@@ -11,18 +11,11 @@ import StoreKit
 
 class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
     
-    
-    
     @IBOutlet weak var ComprehensionsCollectionView: UICollectionView!
     
-    
     let filemgr = NSFileManager.defaultManager()
-    
     var JSONData = NSDictionary()
-    
-    var totalData = NSArray()
-
-    
+    var totalData = NSArray() {didSet {updateUI()}}
     
     override func viewDidLoad() {
     
@@ -32,8 +25,9 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
     }
     
     func updateUI(){
+        println("Updating UI...")
         dispatch_async(dispatch_get_main_queue()){
-            //            println("About to refresh table. Data count is \(self.data.count). Data is \(self.data)")
+            println("About to refresh table. Data count is \(self.totalData.count). Data is \(self.totalData)")
             self.ComprehensionsCollectionView.reloadData()
         }
     }
@@ -76,7 +70,8 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
         var vc: ComprehensionMenuController = self.storyboard?.instantiateViewControllerWithIdentifier("ComprehensionMenuID") as! ComprehensionMenuController
         var rData = totalData[indexPath.row]["pages"] as! NSArray
         var qData = totalData[indexPath.row]["questions"] as! NSArray
-        var titleOverview = totalData[indexPath.row]["overview"] as! String
+        var titleOverview = totalData[indexPath.row]["title"] as! String
+        var descriptionOverview = totalData[indexPath.row]["overview"] as! String
         println("Reading data is \(rData).")
         println("Question data is \(qData).")
         vc.readingData = rData
@@ -85,6 +80,7 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
         var filePath = Utility.createFilePathInDocsDir(urlImageLocal as String)
         vc.urlImgLocal = filePath
         vc.titleLabelText = titleOverview
+        vc.descriptionLabelText = descriptionOverview
         self.presentViewController(vc, animated: true, completion: nil)
     }
     
@@ -93,6 +89,19 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
         UIView.animateWithDuration(0.25, animations: {
             cell.layer.transform = CATransform3DMakeScale(1,1,1)
         })
+    }
+    
+    @IBAction func LogoutButton(sender: AnyObject) {
+        NSUserDefaults.standardUserDefaults().removeObjectForKey("email")
+        NSUserDefaults.standardUserDefaults().removeObjectForKey("password")
+        NSUserDefaults.standardUserDefaults().removeObjectForKey("access_token")
+        NSUserDefaults.standardUserDefaults().removeObjectForKey("learnerID")
+        NSUserDefaults.standardUserDefaults().removeObjectForKey("learnerName")
+        NSUserDefaults.standardUserDefaults().removeObjectForKey("premium_access")
+        NSUserDefaults.standardUserDefaults().removeObjectForKey("access_expiration")
+        
+        var vc: LoginController = self.storyboard?.instantiateViewControllerWithIdentifier("LoginControllerID") as! LoginController
+        presentViewController(vc, animated: true, completion: nil)
     }
     
     func loadData() {
@@ -108,20 +117,6 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
             let exps = data["comprehensions"] as! NSArray
             self.totalData = exps
             println("Number of comps is \(exps.count)")
-            
-            for exp in exps{
-                //                println(exp)
-                var imgString = exp["url_image_remote"] as! String
-                if imgString != ""{
-                    
-                    var img = exp["url_image_remote"] as! String
-                    var title = exp["title"] as! String
-                    println("Total data is \(totalData). ")
-                    dispatch_async(dispatch_get_main_queue()){
-                        self.ComprehensionsCollectionView.reloadData()
-                    }
-                }
-            }
 //            self.ActivitySpinner.stopAnimating()
 //            self.ActivitySpinner.hidden = true
             return;

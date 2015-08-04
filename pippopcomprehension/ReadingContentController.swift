@@ -32,7 +32,7 @@ class ReadingContentController: UIViewController, UIPageViewControllerDataSource
         
         self.pageViewController.setViewControllers(viewControllers as [AnyObject], direction: .Forward, animated: true, completion: nil)
         
-        self.pageViewController.view.frame = CGRectMake(0, 0, self.view.frame.width, self.view.frame.size.height - 60)
+        self.pageViewController.view.frame = CGRectMake(0, 0, self.view.frame.width, self.view.frame.size.height)
         
         self.addChildViewController(self.pageViewController)
         self.view.addSubview(self.pageViewController.view)

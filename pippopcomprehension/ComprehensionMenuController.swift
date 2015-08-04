@@ -13,17 +13,21 @@ class ComprehensionMenuController: UIViewController {
     
     var urlImgLocal = ""
     var titleLabelText = ""
+    var descriptionLabelText = ""
     var readingData = NSArray()
     var questionsData = NSArray()
     
     @IBOutlet weak var ComprehensionImage: UIImageView!
     @IBOutlet weak var TitleLabel: UILabel!
+    @IBOutlet weak var DescriptionLabel: UILabel!
+    
     
     override func viewDidLoad() {
         println("Menu VC loaded.")
         println("Url image local is \(urlImgLocal)")
         self.ComprehensionImage.image = UIImage(named: urlImgLocal)
         self.TitleLabel.text = titleLabelText
+        self.DescriptionLabel.text = descriptionLabelText
     }
     
     

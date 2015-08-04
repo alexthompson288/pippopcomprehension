@@ -19,25 +19,18 @@ class QuestionViewController: UIViewController {
     var answers = [String]()
     
     @IBOutlet weak var QuestionLabel: UILabel!
-    
     @IBOutlet weak var QuestionImage: UIImageView!
-    
     @IBOutlet weak var Answer1Label: UIButton!
-    
     @IBOutlet weak var Answer2Label: UIButton!
-    
     @IBOutlet weak var Answer3Label: UIButton!
-    
     @IBOutlet weak var EndQuizLabel: UIButton!
-    
     @IBOutlet weak var ScoreLabel: UILabel!
-    
     @IBOutlet weak var EndOfQuizView: UIView!
-    
     @IBOutlet weak var EndOfQuizScoreLabel: UILabel!
     
     override func viewDidLoad() {
         self.EndOfQuizView.hidden = true
+        QuestionImage.hidden = false
         totalQ = self.qData.count
         updateUI()
         println("Quesiton VC loaded")
@@ -91,6 +84,7 @@ class QuestionViewController: UIViewController {
             self.Answer2Label.setTitle(newAnswers[1], forState: .Normal)
             self.Answer3Label.setTitle(newAnswers[2], forState: .Normal)
             var urlImageLocal: NSString = thisQuestion["url_image_local"] as! NSString
+            println("Local image name is ...\(urlImageLocal)")
             var filePath = Utility.createFilePathInDocsDir(urlImageLocal as String)
             var fileExists = Utility.checkIfFileExistsAtPath(filePath)
             if fileExists == true {
@@ -114,7 +108,6 @@ class QuestionViewController: UIViewController {
         }
         self.index++
         setQuestion()
-        
     }
     
     @IBAction func Answer2Button(sender: AnyObject) {
@@ -141,7 +134,6 @@ class QuestionViewController: UIViewController {
         println("Ending quiz")
         var vc: ComprehensionsIndexController = self.storyboard?.instantiateViewControllerWithIdentifier("ComprehensionsIndexID") as! ComprehensionsIndexController
         self.presentViewController(vc, animated: true, completion: nil)
-
     }
     
     func writeImagesLocally(dataInput: NSDictionary) {
@@ -186,7 +178,5 @@ class QuestionViewController: UIViewController {
             }
         }
     }
-
-    
     
 }
