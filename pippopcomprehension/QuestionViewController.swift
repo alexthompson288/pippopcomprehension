@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import MediaPlayer
+import AVFoundation
 
 class QuestionViewController: UIViewController {
 
@@ -18,13 +19,17 @@ class QuestionViewController: UIViewController {
         checkIfEnd()
         }
     }
-    var totalQ = 0
+    var totalQuestions = Int()
+    var totalPages = Int()
+
     var score = 0 {didSet { updateUI() }}
     var correctAnswer = ""
     var answers = [String]()
     var thisQuestion = NSDictionary()
     var userAnswers = NSMutableArray()
     var activityId = Int()
+    var autoplay = Bool()
+    var mediatype = String()
     
     @IBOutlet weak var QuestionLabel: UILabel!
     @IBOutlet weak var QuestionImage: UIImageView!
@@ -41,11 +46,18 @@ class QuestionViewController: UIViewController {
     
     
     var moviePlayer: MPMoviePlayerController!
+    var audioPlayer = AVAudioPlayer()
 
     
     override func viewDidLoad() {
+        var audioVal = NSUserDefaults.standardUserDefaults().objectForKey("audio_instructions") as? Bool
+        if let audioVal = audioVal {
+            println("Autoplay instructions is \(audioVal)")
+            self.autoplay = audioVal
+        }
+        self.moviePlayer = MPMoviePlayerController()
+        self.totalPages = self.qData.count
         QuestionImage.hidden = false
-        totalQ = self.qData.count
         updateUI()
         println("Quesiton VC loaded")
         println("Question data is \(qData)")
@@ -53,22 +65,29 @@ class QuestionViewController: UIViewController {
     }
     
     func updateUI(){
-        self.ProgresBar.setProgress(Float(self.index) / Float(self.totalQ), animated: true)
+        self.ProgresBar.setProgress(Float(self.index) / Float(self.totalPages), animated: true)
     }
     
     func endQuizToPeformances(){
         var pvc: PerformanceViewController = self.storyboard?.instantiateViewControllerWithIdentifier("PerformancesViewControllerId") as! PerformanceViewController
         pvc.userAnswers = self.userAnswers
         pvc.userScore = self.score
-        pvc.totalScore = self.totalQ
+        pvc.totalScore = self.totalQuestions
         pvc.activityId = self.activityId
         presentViewController(pvc, animated: true, completion: nil)
     }
     
+    override func viewWillAppear(animated: Bool) {
+        println("View appearing")
+        self.moviePlayer.stop()
+    }
+    
+    
+    
     func checkIfEnd() -> Bool{
-        if self.index  == self.totalQ {
+        if self.index  == self.totalPages {
             self.nextPageButtonLabel.hidden = true
-            println("It is end because index: \(self.index + 1) and total: \(self.totalQ)")
+            println("It is end because index: \(self.index + 1) and total: \(self.totalQuestions)")
             endQuizToPeformances()
             return true
         } else {
@@ -131,8 +150,11 @@ class QuestionViewController: UIViewController {
                 } else {
                     self.PlayMediaLabel.hidden = true
                 }
+                animateInAnswers()
                 
             } else {
+                
+//                TYPE IS MEDIA PAGE
                 self.Answer1Label.hidden = true
                 self.Answer2Label.hidden = true
                 self.Answer3Label.hidden = true
@@ -152,6 +174,46 @@ class QuestionViewController: UIViewController {
                     println("There is NOT a remote media file")
 
                     self.PlayMediaLabel.hidden = true
+                }
+                
+                self.mediatype = thisQuestion["media_type"] as! String
+                
+//                IF WE HAVE A VIDEO THEN AUTOPLAY
+                if self.mediatype == "video" {
+                    var urlpath: NSURL!
+                    var urlMediaRemote = self.thisQuestion["url_media_remote"] as? String
+                    if let urlMediaRemote = urlMediaRemote {
+                        urlpath = NSURL(string: urlMediaRemote)!
+                        self.moviePlayer.stop()
+                        println("Playing video. Url path is \(urlpath)")
+                        self.moviePlayer = MPMoviePlayerController(contentURL: urlpath!)
+                        self.moviePlayer.view.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+                        self.view.addSubview(self.moviePlayer.view)
+                        self.moviePlayer.controlStyle = MPMovieControlStyle.Fullscreen
+                        self.moviePlayer.fullscreen = true
+//                        self.moviePlayer.play()
+                    }
+                } else if self.mediatype == "audio" {
+//                    WE HAVE AUDIO SO PLAY AUDIO
+                    var urlMediaRemote = self.thisQuestion["url_media_remote"] as? String
+                    if let urlMediaRemote = urlMediaRemote {
+                        if urlMediaRemote != "" {
+                            if self.autoplay == true {
+                            
+                                var urlpath = NSURL(string: urlMediaRemote)!
+                                self.moviePlayer.stop()
+
+                                println("Playing audio. Url path is \(urlpath)")
+                                self.moviePlayer = MPMoviePlayerController(contentURL: urlpath)
+                                self.moviePlayer.view.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+                                self.view.addSubview(self.moviePlayer.view)
+                                self.moviePlayer.controlStyle = MPMovieControlStyle.Fullscreen
+                                self.moviePlayer.fullscreen = false
+    //                            self.moviePlayer.play()
+                            }
+                        }
+                    }
+
                 }
                 
                 var urlImageLocal: NSString = thisQuestion["url_image_local"] as! NSString
@@ -192,19 +254,27 @@ class QuestionViewController: UIViewController {
             var urlMediaRemote = self.thisQuestion["url_media_remote"] as? String
             if let urlMediaRemote = urlMediaRemote {
                 urlpath = NSURL(string: urlMediaRemote)!
-
-                println("url path is \(urlpath)")
-                self.moviePlayer = MPMoviePlayerController(contentURL: urlpath!)
-                self.moviePlayer.view.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
-                self.view.addSubview(self.moviePlayer.view)
-                self.moviePlayer.controlStyle = MPMovieControlStyle.Fullscreen
-                self.moviePlayer.fullscreen = true
-                self.moviePlayer.play()
-        }
+                if urlMediaRemote != ""{
+                    println("In play media action. Url path is \(urlpath)")
+                    self.moviePlayer.stop()
+                    self.moviePlayer = MPMoviePlayerController(contentURL: urlpath!)
+                    self.moviePlayer.view.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+                    self.view.addSubview(self.moviePlayer.view)
+                    self.moviePlayer.controlStyle = MPMovieControlStyle.Fullscreen
+                    if self.mediatype == "video"{
+                        self.moviePlayer.fullscreen = true
+                    } else {
+                        self.moviePlayer.fullscreen = false
+                    }
+                    self.moviePlayer.play()
+                }
+            }
     }
     
     @IBAction func NextPageButton(sender: AnyObject) {
         self.index++
+        self.moviePlayer.stop()
+
         setQuestion()
     }
     
@@ -274,6 +344,31 @@ class QuestionViewController: UIViewController {
         println("Ending quiz")
         var vc: ComprehensionsIndexController = self.storyboard?.instantiateViewControllerWithIdentifier("ComprehensionsIndexID") as! ComprehensionsIndexController
         self.presentViewController(vc, animated: true, completion: nil)
+    }
+    
+    func animateInAnswers(){
+        UIView.animateWithDuration(0.7, delay: 0.1, options: .CurveEaseOut, animations: {
+            var answer1frame = self.Answer1Label.frame
+            answer1frame.origin.x -= answer1frame.size.height
+            self.Answer1Label.frame = answer1frame
+            
+            
+            var answer2frame = self.Answer2Label.frame
+            answer2frame.origin.y += answer2frame.size.height
+            self.Answer2Label.frame = answer2frame
+            
+            
+            var answer3frame = self.Answer3Label.frame
+            answer3frame.origin.y -= answer3frame.size.height
+            self.Answer3Label.frame = answer3frame
+            
+            var answer4frame = self.Answer4Label.frame
+            answer4frame.origin.x += answer4frame.size.height
+            self.Answer4Label.frame = answer4frame
+            
+            }, completion: { finished in
+                println("Basket doors opened!")
+        })
     }
     
     func writeImagesLocally(dataInput: NSDictionary) {

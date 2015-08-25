@@ -15,13 +15,25 @@ class SettingsController: UIViewController {
     var learnerName = String()
     var access_token = String()
     var learner_id = Int()
+    var autoplay = Bool() {didSet {
+            updateUI()
+        }
+    }
     
     override func viewDidLoad() {
         self.access_token = NSUserDefaults.standardUserDefaults().objectForKey("access_token") as! String
         if let currentLearner = NSUserDefaults.standardUserDefaults().objectForKey("learnerID") as? Int {
             self.learner_id = currentLearner
         }
+        var audioVal = NSUserDefaults.standardUserDefaults().objectForKey("audio_instructions") as? Bool
+        if let audioVal = audioVal {
+            println("Autoplay instructions is \(audioVal)")
+            self.autoplay = audioVal
+        }
+        
     }
+    
+    @IBOutlet weak var InstructionAutoplaySwitch: UISwitch!
     
     @IBAction func UpdateData(sender: AnyObject) {
         var url = Constants.apiUrl
@@ -31,6 +43,16 @@ class SettingsController: UIViewController {
     
     func updateUI(){
         self.LearnerNameLabel.text = learnerName
+        self.InstructionAutoplaySwitch.setOn(autoplay, animated: true)
+    }
+    @IBAction func SwitchAutoplayInstructions(sender: AnyObject) {
+        if self.InstructionAutoplaySwitch.on {
+            println("Switch on")
+            NSUserDefaults.standardUserDefaults().setObject(true, forKey: "audio_instructions")
+        } else {
+            println("Switch off")
+            NSUserDefaults.standardUserDefaults().setObject(false, forKey: "audio_instructions")
+        }
     }
     
     @IBOutlet weak var LearnerNameLabel: UILabel!

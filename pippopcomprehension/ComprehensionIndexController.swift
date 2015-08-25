@@ -31,6 +31,11 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
         loadData()
     }
     
+    override func viewWillAppear(animated: Bool) {
+        println("View appearing...")
+        updateUI()
+    }
+    
     func updateUI(){
         println("Updating UI...")
         dispatch_async(dispatch_get_main_queue()){
@@ -65,6 +70,9 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
         var thisDict:NSDictionary = totalData[indexPath.row] as! NSDictionary
         var cell:ComprehensionIndexCell = collectionView.dequeueReusableCellWithReuseIdentifier("ComprehensionIndexCellID", forIndexPath: indexPath) as! ComprehensionIndexCell
         cell.TitleLabel.text = title as String
+        var stage:String = totalData[indexPath.row]["stage"] as! String
+
+        cell.DifficultyLabel.text = "\(stage) years old"
         
         var filePath = Utility.createFilePathInDocsDir(urlImageLocal as String)
         var fileExists = Utility.checkIfFileExistsAtPath(filePath)
@@ -88,6 +96,8 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
         var urlImageLocal: NSString = totalData[indexPath.row]["url_image_local"] as! NSString
         var filePath = Utility.createFilePathInDocsDir(urlImageLocal as String)
         vc.activityId = totalData[indexPath.row]["id"] as! Int
+        var totalQuestions = totalData[indexPath.row]["total_questions"] as! Int
+        vc.totalQuestions = totalQuestions
         self.presentViewController(vc, animated: true, completion: nil)
     }
     

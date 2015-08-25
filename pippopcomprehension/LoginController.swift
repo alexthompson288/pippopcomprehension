@@ -111,6 +111,7 @@ class LoginController:UIViewController, UITextFieldDelegate {
     var savedEmail:String?
     
     override func viewDidLoad() {
+        setAudioInstructionBool()
         self.ParentGateView.hidden = true
         println("Login view loaded...")
 //        self.LoginFieldsView.layer.borderWidth = 3.0
@@ -140,6 +141,23 @@ class LoginController:UIViewController, UITextFieldDelegate {
     
     func keyboardDidHide(){
         self.LoginButtonLabel.hidden = false
+    }
+    
+    func setAudioInstructionBool(){
+        var audio: Bool?
+        audio = NSUserDefaults.standardUserDefaults().objectForKey("audio_instructions") as? Bool
+        if let myaudio = audio {
+            println("Play audio instructions is set. It is \(myaudio)")
+        } else {
+            
+            NSUserDefaults.standardUserDefaults().setObject(true, forKey: "audio_instructions")
+            var audioVal = NSUserDefaults.standardUserDefaults().objectForKey("audio_instructions") as? Bool
+            if let audioVal = audioVal {
+                println("Set the audio value just now. It is \(audioVal)")
+            }
+
+        }
+
     }
     
     

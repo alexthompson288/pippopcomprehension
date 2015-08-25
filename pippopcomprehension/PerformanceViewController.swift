@@ -50,8 +50,10 @@ class PerformanceViewController: UIViewController, UITableViewDelegate, UITableV
         var userAnswer = self.userAnswers[indexPath.row]["user_answer"] as! String
         if correctAnswer == userAnswer {
             cell.UserAnswerLabel.text = "You got it right!"
+            cell.AnswerStatusImage.image = UIImage(named: "tick")
         } else {
             cell.UserAnswerLabel.text = "You chose: \(userAnswer)"
+            cell.AnswerStatusImage.image = UIImage(named: "cross")
         }
         
         return cell
