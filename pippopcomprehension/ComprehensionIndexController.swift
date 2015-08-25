@@ -16,11 +16,18 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
     let filemgr = NSFileManager.defaultManager()
     var JSONData = NSDictionary()
     var totalData = NSArray() {didSet {updateUI()}}
+    var access_token: String!
+    var learnerID: Int?
+    var learnerName: String?
+    var learners = []
+
     
     override func viewDidLoad() {
-    
+        self.access_token = NSUserDefaults.standardUserDefaults().objectForKey("access_token") as! String
         self.ComprehensionsCollectionView.delegate = self
         self.ComprehensionsCollectionView.dataSource = self
+        setLearnersData()
+
         loadData()
     }
     
@@ -31,6 +38,11 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
             self.ComprehensionsCollectionView.reloadData()
         }
     }
+    
+    @IBAction func ChangeLearnersButton(sender: AnyObject) {
+        
+    }
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -67,20 +79,15 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
     }
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        var vc: ComprehensionMenuController = self.storyboard?.instantiateViewControllerWithIdentifier("ComprehensionMenuID") as! ComprehensionMenuController
+        var vc: QuestionViewController = self.storyboard?.instantiateViewControllerWithIdentifier("QuizID") as! QuestionViewController
         var rData = totalData[indexPath.row]["pages"] as! NSArray
-        var qData = totalData[indexPath.row]["questions"] as! NSArray
         var titleOverview = totalData[indexPath.row]["title"] as! String
         var descriptionOverview = totalData[indexPath.row]["overview"] as! String
         println("Reading data is \(rData).")
-        println("Question data is \(qData).")
-        vc.readingData = rData
-        vc.questionsData = qData
+        vc.qData = rData
         var urlImageLocal: NSString = totalData[indexPath.row]["url_image_local"] as! NSString
         var filePath = Utility.createFilePathInDocsDir(urlImageLocal as String)
-        vc.urlImgLocal = filePath
-        vc.titleLabelText = titleOverview
-        vc.descriptionLabelText = descriptionOverview
+        vc.activityId = totalData[indexPath.row]["id"] as! Int
         self.presentViewController(vc, animated: true, completion: nil)
     }
     
@@ -91,18 +98,7 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
         })
     }
     
-    @IBAction func LogoutButton(sender: AnyObject) {
-        NSUserDefaults.standardUserDefaults().removeObjectForKey("email")
-        NSUserDefaults.standardUserDefaults().removeObjectForKey("password")
-        NSUserDefaults.standardUserDefaults().removeObjectForKey("access_token")
-        NSUserDefaults.standardUserDefaults().removeObjectForKey("learnerID")
-        NSUserDefaults.standardUserDefaults().removeObjectForKey("learnerName")
-        NSUserDefaults.standardUserDefaults().removeObjectForKey("premium_access")
-        NSUserDefaults.standardUserDefaults().removeObjectForKey("access_expiration")
-        
-        var vc: LoginController = self.storyboard?.instantiateViewControllerWithIdentifier("LoginControllerID") as! LoginController
-        presentViewController(vc, animated: true, completion: nil)
-    }
+    
     
     func loadData() {
 //        self.ActivitySpinner.hidden = false
@@ -125,14 +121,21 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
         } else {
             var url = Constants.apiUrl
             println("File doesn't exist locally. Constant is \(url)")
-            getJSON(url)
+            if let learner = self.learnerID {
+                println("Getting JSON FROM SERVER FOR BOOKS")
+                getJSON(url, token: self.access_token, learner_id: learner)
+            } else {
+                println("There is no value inside of learner")
+            }
         }
     }
     
-    func getJSON(api:String) {
+    func getJSON(api:String, token: String, learner_id: Int) {
         let url = NSURL(string: api)!
         let request = NSMutableURLRequest(URL: url)
         request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.HTTPMethod = "POST"
+        request.addValue("Token token=\(token)", forHTTPHeaderField: "Authorization")
         let session = NSURLSession.sharedSession()
         let task = session.dataTaskWithRequest(request) { (data: NSData!, response: NSURLResponse!, error: NSError!) in
             if error != nil {
@@ -151,6 +154,55 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
         task.resume()
     }
     
+    func setLearnersData(){
+        var filepath = Utility.createFilePathInDocsDir("userData.plist")
+        var dataPresent = Utility.checkIfFileExistsAtPath(filepath)
+        if dataPresent{
+            var data = Utility.loadJSONDataAtFilePath(filepath)
+            var ownerName = data["name"] as! String
+            var ownerId = data["id"] as! Int
+            var ownerType = data["user_type"] as! String
+            NSUserDefaults.standardUserDefaults().setObject(ownerName, forKey: "ownerName")
+            NSUserDefaults.standardUserDefaults().setObject(ownerId, forKey: "ownerID")
+            NSUserDefaults.standardUserDefaults().setObject(ownerType, forKey: "ownerType")
+            
+            
+            learners = data["learners"] as! NSArray
+            if let currentLearner = NSUserDefaults.standardUserDefaults().objectForKey("learnerID") as? Int {
+                self.learnerID = currentLearner
+                self.learnerName = NSUserDefaults.standardUserDefaults().objectForKey("learnerName") as? String
+            } else {
+                for learner in learners {
+                    var name: String = learner["name"] as! String
+                    println("Learner name is \(name)")
+                }
+                var firstLearner:NSDictionary = learners[0] as! NSDictionary
+                var name = firstLearner["name"] as! String
+                var id = firstLearner["id"] as! Int
+                var premium_access = firstLearner["premium_access"] as! Bool
+                println("Setting new first learner. Premium access is...\(premium_access)")
+                NSUserDefaults.standardUserDefaults().setObject(name, forKey: "learnerName")
+                NSUserDefaults.standardUserDefaults().setObject(id, forKey: "learnerID")
+                self.learnerID = NSUserDefaults.standardUserDefaults().objectForKey("learnerID") as? Int
+                NSUserDefaults.standardUserDefaults().setObject(premium_access, forKey: "premium_access")
+                
+                learnerName = NSUserDefaults.standardUserDefaults().objectForKey("learnerName") as? String
+            }
+        }
+        
+        if let name = learnerName {
+//            self.LoggedInAsLabel.text = "Logged in as \(name)"
+        }
+    }
+    
+    @IBAction func GoToSettingsButton(sender: AnyObject) {
+        var svc:SettingsController = self.storyboard?.instantiateViewControllerWithIdentifier("SettingsControllerId") as! SettingsController
+        svc.learners = self.learners
+        if let name = self.learnerName {
+            svc.learnerName = name
+        }
+        presentViewController(svc, animated: true, completion: nil)
+    }
     
     func writeImagesLocally(dataInput: NSDictionary) {
         var localImageFilename: NSString?

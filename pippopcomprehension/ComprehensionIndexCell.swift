@@ -16,4 +16,5 @@ class ComprehensionIndexCell: UICollectionViewCell {
 
     @IBOutlet weak var ComprehensionImage: UIImageView!
 
+    @IBOutlet weak var DifficultyLabel: UILabel!
 }

@@ -44,6 +44,29 @@ class Utility {
         println("hello")
     }
     
+    class func postActivityDataToServers(token: String, learner_id: Int, activity_id: Int, activity_type: String, score: Int, performance: NSString){
+        println("Posting activity data to servers...")
+        let url = NSURL(string: Constants.PerformancesUrl)!
+        let request = NSMutableURLRequest(URL: url)
+        request.HTTPMethod = "POST"
+        request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.addValue("Token token=\(token)", forHTTPHeaderField: "Authorization")
+        
+        request.HTTPBody = "{\n\"performance\": {\n\"data\": [\n{\n\"learner_id\":\(learner_id), \"score\":\(score),\"performance\":\(performance),\"activity_id\": \(activity_id), \"activity_type\": \"\(activity_type)\"\n}\n]\n}\n}".dataUsingEncoding(NSUTF8StringEncoding);
+        
+        let session = NSURLSession.sharedSession()
+        let task = session.dataTaskWithRequest(request) { (data: NSData!, response: NSURLResponse!, error: NSError!) in
+            
+            if error != nil {
+                // Handle error...
+                println("There are errors in posting to performances...")
+                return
+            }
+            println("data returned from performance posting is \(data). And response is \(response)")
+        }
+        task.resume()
+    }
+    
     class func checkIfFileExistsAtPath(filepath: String) -> Bool {
         var filemgr = NSFileManager.defaultManager()
         if filemgr.fileExistsAtPath(filepath){

@@ -226,7 +226,7 @@ class LoginController:UIViewController, UITextFieldDelegate {
     }
     @IBAction func LoginButton(sender: AnyObject) {
         self.userFlow = "login"
-        self.showParentGate()
+        self.FirstLoginUserFunction()
     }
 
     

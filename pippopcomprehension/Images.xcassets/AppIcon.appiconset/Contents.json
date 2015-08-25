@@ -21,13 +21,15 @@
       "scale" : "3x"
     },
     {
-      "idiom" : "iphone",
       "size" : "60x60",
+      "idiom" : "iphone",
+      "filename" : "icon_pip_120.png",
       "scale" : "2x"
     },
     {
-      "idiom" : "iphone",
       "size" : "60x60",
+      "idiom" : "iphone",
+      "filename" : "icon_pip_180_180.png",
       "scale" : "3x"
     },
     {
@@ -53,12 +55,13 @@
     {
       "size" : "76x76",
       "idiom" : "ipad",
-      "filename" : "icon_logo_76.png",
+      "filename" : "icon_pip_76.png",
       "scale" : "1x"
     },
     {
-      "idiom" : "ipad",
       "size" : "76x76",
+      "idiom" : "ipad",
+      "filename" : "icon_pip_152.png",
       "scale" : "2x"
     }
   ],
