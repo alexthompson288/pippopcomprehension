@@ -33,6 +33,7 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
         loadScoreData()
         getScoreData()
         loadData()
+        getFreshData()
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -85,15 +86,57 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
             }
         }
         
+        var offlineStatus = comprehensionIsLocal(totalData[indexPath.row] as! NSDictionary)
+        println("Offline status is \(offlineStatus)")
+        
+        
+        
+        //        SET MAIN IMAGE
+        let imageView = UIImageView()
+        imageView.frame = CGRect(x: 10, y: 0, width: cell.frame.width - 20, height: 200)
+        imageView.contentMode = UIViewContentMode.ScaleAspectFit
+        cell.addSubview(imageView)
+        var filePath = Utility.createFilePathInDocsDir(urlImageLocal as String)
+        var fileExists = Utility.checkIfFileExistsAtPath(filePath)
+        if fileExists == true {
+            println("Image is present called \(filePath)")
+            imageView.image = UIImage(named: filePath)
+        } else {
+            println("Unable to find image. Will write to write from network")
+            writeImagesLocally(thisDict)
+        }
+        
+//        SET STARS
         if let starCount = self.starCount {
             for var i = 0; i < self.totalStars; i++
             {
                 let imageView = UIImageView()
                 imageView.contentMode = UIViewContentMode.ScaleAspectFill
-                var width = Int((cell.frame.width) / 5) * i
-                width = width + 20
-                var height = Int(cell.frame.height - 30)
-                imageView.frame = CGRect(x: width, y: height, width: 20, height: 20)
+                var widthFloat = CGFloat()
+                var width = Int()
+                
+                if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                    widthFloat = cell.frame.width - 100
+                    widthFloat = widthFloat / 5
+                    width = Int(widthFloat)
+                    width = width * i
+                    width = width + 50
+                }
+                else {
+                    widthFloat = cell.frame.width
+                    widthFloat = widthFloat / 5
+                    width = Int(widthFloat)
+                    width = width * i
+                    width = width + 5
+                }
+
+               
+//                var height = Int(cell.frame.height - 100)
+                if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                    imageView.frame = CGRect(x: width, y: 205, width: 30, height: 30)
+                } else {
+                    imageView.frame = CGRect(x: width, y: 205, width: 25, height: 25)
+                }
                 if i < starCount {
                     imageView.image = UIImage(named: "star_active")
                 } else {
@@ -103,23 +146,53 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
             }
         }
         
-
-        
-        
-        cell.TitleLabel.text = "\(title)"
-        cell.DifficultyLabel.text = "\(stage) years old"
-        
-        var filePath = Utility.createFilePathInDocsDir(urlImageLocal as String)
-        var fileExists = Utility.checkIfFileExistsAtPath(filePath)
-        if fileExists == true {
-            println("Image is present called \(filePath)")
-            cell.ComprehensionImage.image = UIImage(named: filePath)
+//        SET DOWNLOAD BUTTON
+        let downloadButton   = UIButton.buttonWithType(UIButtonType.System) as! UIButton
+        downloadButton.frame = CGRectMake(50,245, cell.frame.width - 100, 40)
+        downloadButton.backgroundColor = UIColor.greenColor()
+        downloadButton.tag = id
+        downloadButton.layer.cornerRadius = 10.0;
+        downloadButton.layer.borderColor = UIColor(red: 255, green: 217, blue: 84).CGColor
+        downloadButton.layer.borderWidth = 3
+        downloadButton.backgroundColor = ColourValues.yellowColor
+        if offlineStatus == true {
+            downloadButton.setTitle("Delete", forState: UIControlState.Normal)
+            downloadButton.addTarget(self, action: "deleteMedia:", forControlEvents: UIControlEvents.TouchUpInside)
         } else {
-            println("Unable to find image. Will write to write from network")
-            writeImagesLocally(thisDict)
+            downloadButton.setTitle("Download", forState: UIControlState.Normal)
+            downloadButton.addTarget(self, action: "downloadMedia:", forControlEvents: UIControlEvents.TouchUpInside)
         }
+        cell.addSubview(downloadButton)
+        cell.contentView.backgroundColor = UIColor.clearColor()
+        cell.contentView.layer.cornerRadius = 8
+        
+        
+        
+        var titleLabel = UILabel(frame: CGRectMake(0, 0, 100, 21))
+        titleLabel.center = CGPointMake(160, 284)
+        titleLabel.textAlignment = NSTextAlignment.Center
+        titleLabel.text = "I am a test label"
+        
+        
+        var difficultyLabel = UILabel(frame: CGRectMake(0, 0, 100, 21))
+        difficultyLabel.center = CGPointMake(20, 30)
+        difficultyLabel.textAlignment = NSTextAlignment.Center
+        difficultyLabel.text = "\(stage)"
+        
+
+
         return cell
     }
+    
+    func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            return CGSizeMake(300, 320)
+        } else {
+            return CGSizeMake(200, 300)
+        }
+    }
+    
+
     
     func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         var vc: QuestionViewController = self.storyboard?.instantiateViewControllerWithIdentifier("QuizID") as! QuestionViewController
@@ -137,13 +210,11 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
     }
     
     func collectionView(collectionView: UICollectionView, willDisplayCell cell: UICollectionViewCell, forItemAtIndexPath indexPath: NSIndexPath) {
-        cell.layer.transform = CATransform3DMakeScale(0.1,0.1,1)
-        UIView.animateWithDuration(0.25, animations: {
-            cell.layer.transform = CATransform3DMakeScale(1,1,1)
-        })
+//        cell.layer.transform = CATransform3DMakeScale(0.1,0.1,1)
+//        UIView.animateWithDuration(0.25, animations: {
+//            cell.layer.transform = CATransform3DMakeScale(1,1,1)
+//        })
     }
-    
-    
     
     func loadData() {
 //        self.ActivitySpinner.hidden = false
@@ -172,6 +243,16 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
             } else {
                 println("There is no value inside of learner")
             }
+        }
+    }
+    
+    func getFreshData(){
+        var url = Constants.apiUrl
+        if let learner = self.learnerID {
+            println("Getting FRESH JSON FROM SERVER FOR COMPREHENSIONS ")
+            getJSON(url, token: self.access_token, learner_id: learner)
+        } else {
+            println("There is no value inside of learner")
         }
     }
     
@@ -204,9 +285,7 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
                 }
             }
             
-            
             return;
-            
             
         } else {
             println("Could not load the score data...")
@@ -356,8 +435,168 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
             }
         }
     }
-
     
+    func writeMediaLocally(dataInput: NSDictionary, comprehension: NSDictionary) {
+//        SET OPTIONAL VARIABLES
+        var localImageFilename = dataInput["url_image_local"] as? String
+        var remoteImageFilename = dataInput["url_image_remote"] as? String
+        var localMediaFilename = dataInput["url_media_local"] as? String
+        var remoteMediaFilename = dataInput["url_media_remote"] as? String
+        
+//        CHECK IF LOCAL IMAGE ELSE WRITE IT
+        if let ImgLocal = localImageFilename {
+            var imgPath = Utility.createFilePathInDocsDir(ImgLocal)
+            println("Inside image local. \(imgPath)")
+            var fileExists = Utility.checkIfFileExistsAtPath(imgPath)
+            if fileExists == true {
+                println("Local file exists at \(imgPath)")
+            } else {
+                println("Local file does not exist. Was named \(ImgLocal). About to get remote url and pull from network")
+                if let ImgRemote = remoteImageFilename {
+                    writeFileLocally(ImgRemote, filename: ImgLocal)
+                    if comprehensionIsLocal(comprehension) { updateUI() }
+                } else {
+                    println("remote Image filename empty")
+                }
+            }
+        }
+        
+        if let MediaLocal = localMediaFilename {
+            var mediaPath = Utility.createFilePathInDocsDir(MediaLocal)
+            println("Inside image local. \(mediaPath)")
+            var fileExists = Utility.checkIfFileExistsAtPath(mediaPath)
+            if fileExists == true {
+                println("Local file exists at \(mediaPath)")
+            } else {
+                println("Local file does not exist. Was named \(MediaLocal). About to get remote url and pull from network")
+                if let MediaRemote = remoteMediaFilename {
+                    writeFileLocally(MediaRemote, filename: MediaLocal)
+                    if comprehensionIsLocal(comprehension) { updateUI() }
+                } else {
+                    println("remote media filename empty")
+                }
+            }
+        }
+    }
+    
+    func deleteMediaLocally(dataInput: NSDictionary) {
+        //        SET OPTIONAL VARIABLES
+        var localImageFilename = dataInput["url_image_local"] as? String
+        var localMediaFilename = dataInput["url_media_local"] as? String
+        
+        //        CHECK IF LOCAL IMAGE ELSE WRITE IT
+        if let ImgLocal = localImageFilename {
+            if ImgLocal != "" {
+                var imgPath = Utility.createFilePathInDocsDir(ImgLocal)
+                println("Inside image local. \(imgPath)")
+                var fileExists = Utility.checkIfFileExistsAtPath(imgPath)
+                if fileExists == true {
+                    NSFileManager.defaultManager().removeItemAtPath(imgPath as String, error: nil)
+                    println("Deleting file at \(imgPath)")
+                } else {
+                    println("Did not delete file. Never existed")
+                }
+            }
+        }
+        
+        if let MediaLocal = localMediaFilename {
+            if MediaLocal != "" {
+                var mediaPath = Utility.createFilePathInDocsDir(MediaLocal)
+                println("Inside image local. \(mediaPath)")
+                var fileExists = Utility.checkIfFileExistsAtPath(mediaPath)
+                if fileExists == true {
+                    NSFileManager.defaultManager().removeItemAtPath(mediaPath as String, error: nil)
+                    println("Deleting file at \(mediaPath)")
+                } else {
+                    println("Did not delete file. Never existed")
+                }
+            }
+        }
+    }
+    
+    func writeFileLocally(filePath: String, filename: String){
+        println("Network location is \(filePath)")
+        let URL = NSURL(string: filePath)
+        println("Converted string to URL")
+        let qos = Int(QOS_CLASS_USER_INITIATED.value)
+        println("About to run async off main queue")
+        dispatch_async(dispatch_get_global_queue(qos, 0)){() -> Void in
+            let imageData = NSData(contentsOfURL: URL!)
+            println("Got image data. About to write it")
+            var localPath:NSString = Utility.documentsPathForFileName(filename)
+            imageData!.writeToFile(localPath as String, atomically: true)
+            println("Written image as data to \(localPath)")
+            dispatch_async(dispatch_get_main_queue()){
+                if Utility.checkIfFileExistsAtPath(localPath as String) == true {
+                    println("File successfully written")
+                } else {
+                    println("No luck with image local or remote")
+                }
+            }
+        }
+    }
+    
+    func comprehensionIsLocal(comprehension: NSDictionary) -> Bool {
+        var questions = comprehension["pages"] as! NSArray
+        for question in questions {
+            var imgLocal = question["url_image_local"] as? String
+            var mediaLocal = question["url_media_local"] as? String
+            if let imgLocal = imgLocal {
+                if imgLocal != "" {
+                    var filePath = Utility.createFilePathInDocsDir(imgLocal as String)
+                    var fileExists = Utility.checkIfFileExistsAtPath(filePath)
+                    println("\(fileExists) that img file exists at \(filePath).")
+                    if fileExists == false {
+                        return false
+                    }
+                }
+            }
+            if let mediaLocal = mediaLocal {
+                if mediaLocal != "" {
+                    var filePath = Utility.createFilePathInDocsDir(mediaLocal as String)
+                    var fileExists = Utility.checkIfFileExistsAtPath(filePath)
+                    println("\(fileExists) that media file exists at \(filePath).")
+                    if fileExists == false {
+                        return false
+                    }
+                }
+            }
+        }
+        return true
+    }
+    
+    func downloadMedia(sender: UIButton){
+        println("Downloading media...")
+        var thisCompId = sender.tag as Int
+        for comp in totalData {
+            var compId = comp["id"] as! Int
+            if compId == thisCompId {
+                var thisComp = comp as! NSDictionary
+                var questions = thisComp["pages"] as! NSArray
+                for question in questions {
+                    writeMediaLocally(question as! NSDictionary, comprehension: comp as! NSDictionary)
+                }
+                println("Successfully downloaded all media...")
+            }
+            
+        }
+    }
+    
+    func deleteMedia(sender: UIButton){
+        println("Deleting media...")
+        var thisCompId = sender.tag as Int
+        for comp in totalData {
+            var compId = comp["id"] as! Int
+            if compId == thisCompId {
+                var thisComp = comp as! NSDictionary
+                var questions = thisComp["pages"] as! NSArray
+                for question in questions {
+                    deleteMediaLocally(question as! NSDictionary)
+                }
+            }
+            
+        }
+    }
     
 }
 

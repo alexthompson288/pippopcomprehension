@@ -63,6 +63,38 @@ class QuestionViewController: UIViewController {
         println("Quesiton VC loaded")
         println("Question data is \(qData)")
         setQuestion()
+        var swipeRight = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
+        swipeRight.direction = UISwipeGestureRecognizerDirection.Right
+        self.view.addGestureRecognizer(swipeRight)
+        
+        var swipeLeft = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
+        swipeLeft.direction = UISwipeGestureRecognizerDirection.Left
+        self.view.addGestureRecognizer(swipeLeft)
+        
+        var swipeDown = UISwipeGestureRecognizer(target: self, action: "respondToSwipeGesture:")
+        swipeDown.direction = UISwipeGestureRecognizerDirection.Down
+        self.view.addGestureRecognizer(swipeDown)
+        self.nextPageButtonLabel.hidden = true
+    }
+    
+    func respondToSwipeGesture(gesture: UIGestureRecognizer) {
+        
+        if let swipeGesture = gesture as? UISwipeGestureRecognizer {
+            
+            switch swipeGesture.direction {
+            case UISwipeGestureRecognizerDirection.Right:
+                println("Swiped right")
+            case UISwipeGestureRecognizerDirection.Down:
+                println("Swiped down")
+            case UISwipeGestureRecognizerDirection.Left:
+                println("Swiped down")
+                self.index++
+                self.moviePlayer.stop()
+                setQuestion()
+            default:
+                break
+            }
+        }
     }
     
     func updateUI(){
@@ -97,6 +129,9 @@ class QuestionViewController: UIViewController {
     }
     
     func setQuestion(){
+        self.QuestionPageImage.image = nil
+        self.QuestionImage.image = nil
+        self.view.backgroundColor = UIColor.blackColor()
         var isEnd = checkIfEnd()
         if isEnd == false {
             self.thisQuestion = qData[index] as! NSDictionary
@@ -126,7 +161,14 @@ class QuestionViewController: UIViewController {
                 self.QuestionImage.hidden = true
                 self.QuestionPageImage.hidden = false
                 self.PlayMediaLabel.hidden = true
-                
+                if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+                    self.QuestionLabel.font = UIFont(name: self.QuestionLabel.font.fontName, size: 40)
+                    self.Answer1Label.titleLabel?.font = UIFont(name: self.QuestionLabel.font.fontName, size: 26)
+                    self.Answer2Label.titleLabel?.font = UIFont(name: self.QuestionLabel.font.fontName, size: 26)
+                    self.Answer3Label.titleLabel?.font = UIFont(name: self.QuestionLabel.font.fontName, size: 26)
+                    self.Answer4Label.titleLabel?.font = UIFont(name: self.QuestionLabel.font.fontName, size: 26)
+                    println("Making larger font for iPad")
+                }
 
                 
                 self.correctAnswer = goodAnswer
@@ -195,37 +237,81 @@ class QuestionViewController: UIViewController {
 //                IF WE HAVE A VIDEO THEN AUTOPLAY
                 if self.mediatype == "video" {
                     var urlpath: NSURL!
-                    var urlMediaRemote = self.thisQuestion["url_media_remote"] as? String
-                    if let urlMediaRemote = urlMediaRemote {
-                        urlpath = NSURL(string: urlMediaRemote)!
+                    
+//                    IF VIDEO IS LOCAL SET LOCAL URL
+                    var urlMediaLocal = self.thisQuestion["url_media_local"] as? String
+                    if let urlMediaLocal = urlMediaLocal {
+                        if urlMediaLocal != "" {
+                            var mediaPath = Utility.createFilePathInDocsDir(urlMediaLocal)
+                            println("Inside image local. \(mediaPath)")
+                            var fileExists = Utility.checkIfFileExistsAtPath(mediaPath)
+                            if fileExists == true {
+                                if let directoryURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0] as? NSURL {
+                                    urlpath = directoryURL.URLByAppendingPathComponent(urlMediaLocal)
+                                }
+                            } else {
+                                //                    ELSE SET REMOTE URL
+                                
+                                var urlMediaRemote = self.thisQuestion["url_media_remote"] as? String
+                                if let urlMediaRemote = urlMediaRemote {
+                                    if urlMediaRemote != ""{
+                                        urlpath = NSURL(string: urlMediaRemote)!
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    
+//                    PLAY VIDEO FILE
+                    
+                    self.moviePlayer.stop()
+                    println("Playing video. Url path is \(urlpath)")
+                    self.moviePlayer = MPMoviePlayerController(contentURL: urlpath!)
+                    self.moviePlayer.view.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+                    self.view.addSubview(self.moviePlayer.view)
+                    self.moviePlayer.controlStyle = MPMovieControlStyle.Fullscreen
+                    self.moviePlayer.fullscreen = true
+//                        self.moviePlayer.play()
+                    
+                } else if self.mediatype == "audio" {
+//                    WE HAVE AUDIO
+                    var urlpath: NSURL!
+                    if self.autoplay == true {
+                        var urlMediaLocal = self.thisQuestion["url_media_local"] as? String
+                        if let urlMediaLocal = urlMediaLocal {
+                            if urlMediaLocal != "" {
+                                
+//                                SET LOCAL URL IF PRESENT
+                                var mediaPath = Utility.createFilePathInDocsDir(urlMediaLocal)
+                                println("Inside image local. \(mediaPath)")
+                                var fileExists = Utility.checkIfFileExistsAtPath(mediaPath)
+                                if fileExists == true {
+                                    if let directoryURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0] as? NSURL {
+                                        urlpath = directoryURL.URLByAppendingPathComponent(urlMediaLocal)
+                                    }
+                                } else {
+                                    
+            //                    ELSE SET REMOTE URL
+                                    var urlMediaRemote = self.thisQuestion["url_media_remote"] as? String
+                                    if let urlMediaRemote = urlMediaRemote {
+                                        if urlMediaRemote != ""{
+                                            urlpath = NSURL(string: urlMediaRemote)!
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         self.moviePlayer.stop()
-                        println("Playing video. Url path is \(urlpath)")
-                        self.moviePlayer = MPMoviePlayerController(contentURL: urlpath!)
+
+                        println("Playing audio. Url path is \(urlpath)")
+                        self.moviePlayer = MPMoviePlayerController(contentURL: urlpath)
                         self.moviePlayer.view.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
                         self.view.addSubview(self.moviePlayer.view)
                         self.moviePlayer.controlStyle = MPMovieControlStyle.Fullscreen
-                        self.moviePlayer.fullscreen = true
-//                        self.moviePlayer.play()
-                    }
-                } else if self.mediatype == "audio" {
-//                    WE HAVE AUDIO SO PLAY AUDIO
-                    var urlMediaRemote = self.thisQuestion["url_media_remote"] as? String
-                    if let urlMediaRemote = urlMediaRemote {
-                        if urlMediaRemote != "" {
-                            if self.autoplay == true {
-                            
-                                var urlpath = NSURL(string: urlMediaRemote)!
-                                self.moviePlayer.stop()
-
-                                println("Playing audio. Url path is \(urlpath)")
-                                self.moviePlayer = MPMoviePlayerController(contentURL: urlpath)
-                                self.moviePlayer.view.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
-                                self.view.addSubview(self.moviePlayer.view)
-                                self.moviePlayer.controlStyle = MPMovieControlStyle.Fullscreen
-                                self.moviePlayer.fullscreen = false
-    //                            self.moviePlayer.play()
-                            }
-                        }
+                        self.moviePlayer.fullscreen = false
+//                            self.moviePlayer.play()
                     }
 
                 }
@@ -250,25 +336,29 @@ class QuestionViewController: UIViewController {
     }
     
     @IBAction func PlayMedia(sender: AnyObject) {
-        
-//        var urlMediaLocal = self.thisQuestion["url_media_local"] as? NSString
-//        if let urlMediaLocal = urlMediaLocal {
-//            var filePath = Utility.createFilePathInDocsDir(urlMediaLocal as String)
-//            var fileExists = Utility.checkIfFileExistsAtPath(filePath)
-//            if fileExists == true {
-//                println("Image is present called \(filePath)")
-//                self.QuestionImage.image = UIImage(named: filePath)
-//            } else {
-//                println("Unable to find image. Will write to write from network")
-//                writeImagesLocally(thisQuestion)
-//            }
-//        }
             var device = UIDevice.currentDevice().userInterfaceIdiom
             var urlpath: NSURL!
-            var urlMediaRemote = self.thisQuestion["url_media_remote"] as? String
-            if let urlMediaRemote = urlMediaRemote {
-                urlpath = NSURL(string: urlMediaRemote)!
-                if urlMediaRemote != ""{
+        
+            var urlMediaLocal = self.thisQuestion["url_media_local"] as? String
+            if let urlMediaLocal = urlMediaLocal {
+                if urlMediaLocal != "" {
+                    var mediaPath = Utility.createFilePathInDocsDir(urlMediaLocal)
+                    println("Inside image local. \(mediaPath)")
+                    var fileExists = Utility.checkIfFileExistsAtPath(mediaPath)
+                    if fileExists == true {
+                        if let directoryURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0] as? NSURL {
+                            urlpath = directoryURL.URLByAppendingPathComponent(urlMediaLocal)
+                        }
+                    } else {
+                        //                    ELSE SET REMOTE URL
+                        
+                        var urlMediaRemote = self.thisQuestion["url_media_remote"] as? String
+                        if let urlMediaRemote = urlMediaRemote {
+                            if urlMediaRemote != ""{
+                                urlpath = NSURL(string: urlMediaRemote)!
+                            }
+                        }
+                    }
                     println("In play media action. Url path is \(urlpath)")
                     self.moviePlayer.stop()
                     self.moviePlayer = MPMoviePlayerController(contentURL: urlpath!)
@@ -281,6 +371,7 @@ class QuestionViewController: UIViewController {
                         self.moviePlayer.fullscreen = false
                     }
                     self.moviePlayer.play()
+
                 }
             }
     }

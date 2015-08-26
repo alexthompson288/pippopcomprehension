@@ -53,7 +53,7 @@ class PerformanceViewController: UIViewController, UITableViewDelegate, UITableV
             cell.AnswerStatusImage.image = UIImage(named: "tick")
         } else {
             cell.UserAnswerLabel.text = "You chose: \(userAnswer)"
-            cell.AnswerStatusImage.image = UIImage(named: "cross")
+            cell.AnswerStatusImage.image = UIImage(named: "close")
         }
         
         return cell
