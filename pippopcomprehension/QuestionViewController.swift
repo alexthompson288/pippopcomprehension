@@ -40,6 +40,7 @@ class QuestionViewController: UIViewController {
     @IBOutlet weak var EndQuizLabel: UIButton!
     @IBOutlet weak var PlayMediaLabel: UIButton!
     @IBOutlet weak var nextPageButtonLabel: UIButton!
+    @IBOutlet weak var QuestionPageImage: UIImageView!
 
 
     @IBOutlet weak var ProgresBar: UIProgressView!
@@ -122,7 +123,10 @@ class QuestionViewController: UIViewController {
                 self.Answer3Label.hidden = false
                 self.Answer4Label.hidden = false
                 self.QuestionLabel.hidden = false
+                self.QuestionImage.hidden = true
+                self.QuestionPageImage.hidden = false
                 self.PlayMediaLabel.hidden = true
+                
 
                 
                 self.correctAnswer = goodAnswer
@@ -130,19 +134,27 @@ class QuestionViewController: UIViewController {
                 self.Answer2Label.setTitle(newAnswers[1], forState: .Normal)
                 self.Answer3Label.setTitle(newAnswers[2], forState: .Normal)
                 self.Answer4Label.setTitle(newAnswers[3], forState: .Normal)
-                var img: String? = thisQuestion["url_image_local"] as? String
-                if let image = img {
-                    var urlImageLocal: NSString = thisQuestion["url_image_local"] as! NSString
-                    println("Local image name is ...\(urlImageLocal)")
-                    var filePath = Utility.createFilePathInDocsDir(urlImageLocal as String)
-                    var fileExists = Utility.checkIfFileExistsAtPath(filePath)
-                    if fileExists == true {
-                        println("Image is present called \(filePath)")
-                        self.QuestionImage.image = UIImage(named: filePath)
+                var imgLocal: String? = thisQuestion["url_image_local"] as? String
+                if let urlImageLocal = imgLocal {
+                    if urlImageLocal != ""{
+                        println("Local image name is ...\(urlImageLocal)")
+                        var filePath = Utility.createFilePathInDocsDir(urlImageLocal as String)
+                        var fileExists = Utility.checkIfFileExistsAtPath(filePath)
+                        if fileExists == true {
+                            println("Image is saved locally - called \(filePath)")
+                            self.QuestionPageImage.image = UIImage(named: filePath)
+                        } else {
+                            println("Unable to find image. Will write to write from network")
+                            writeImagesLocally(thisQuestion)
+                        }
+                        
                     } else {
-                        println("Unable to find image. Will write to write from network")
-                        writeImagesLocally(thisQuestion)
+                        println("Adding tick image because none present")
+                        self.QuestionPageImage.image = UIImage(named: "confused")
                     }
+                } else {
+                    println("Adding tick image because none present")
+                    self.QuestionPageImage.image = UIImage(named: "confused")
                 }
                 var urlMediaRemote:String? = thisQuestion["url_media_remote"] as? String
                 if let urlMediaRemote = urlMediaRemote {
@@ -160,6 +172,8 @@ class QuestionViewController: UIViewController {
                 self.Answer3Label.hidden = true
                 self.Answer4Label.hidden = true
                 self.QuestionLabel.hidden = true
+                self.QuestionPageImage.hidden = true
+                self.QuestionImage.hidden = false
                 
                 
                 var urlMediaRemote:String? = thisQuestion["url_media_remote"] as? String
@@ -221,7 +235,7 @@ class QuestionViewController: UIViewController {
                 var filePath = Utility.createFilePathInDocsDir(urlImageLocal as String)
                 var fileExists = Utility.checkIfFileExistsAtPath(filePath)
                 if fileExists == true {
-                    println("Image is present called \(filePath)")
+                    println("Image is saved locally - called \(filePath)")
                     self.QuestionImage.image = UIImage(named: filePath)
                 } else {
                     println("Unable to find image. Will write to write from network")
@@ -367,7 +381,7 @@ class QuestionViewController: UIViewController {
             self.Answer4Label.frame = answer4frame
             
             }, completion: { finished in
-                println("Basket doors opened!")
+                println("Animation complete!")
         })
     }
     

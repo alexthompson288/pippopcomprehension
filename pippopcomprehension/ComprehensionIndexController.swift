@@ -20,6 +20,9 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
     var learnerID: Int?
     var learnerName: String?
     var learners = []
+    var learnerScores: NSArray?
+    var totalStars = 5
+    var starCount:Int?
 
     
     override func viewDidLoad() {
@@ -27,7 +30,8 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
         self.ComprehensionsCollectionView.delegate = self
         self.ComprehensionsCollectionView.dataSource = self
         setLearnersData()
-
+        loadScoreData()
+        getScoreData()
         loadData()
     }
     
@@ -65,13 +69,44 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
     func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
         println("This line...")
         println("Deque cell \(indexPath.row)")
+        var id:Int = totalData[indexPath.row]["id"] as! Int
         var title:NSString = totalData[indexPath.row]["title"] as! NSString
         var urlImageLocal: NSString = totalData[indexPath.row]["url_image_local"] as! NSString
         var thisDict:NSDictionary = totalData[indexPath.row] as! NSDictionary
         var cell:ComprehensionIndexCell = collectionView.dequeueReusableCellWithReuseIdentifier("ComprehensionIndexCellID", forIndexPath: indexPath) as! ComprehensionIndexCell
-        cell.TitleLabel.text = title as String
         var stage:String = totalData[indexPath.row]["stage"] as! String
+        if let myLearnerScores = self.learnerScores {
+            for score in myLearnerScores {
+                var compId = score["id"] as! Int
+                if compId == id {
+                    var stars:Int = score["stars"] as! Int
+                    self.starCount = stars
+                }
+            }
+        }
+        
+        if let starCount = self.starCount {
+            for var i = 0; i < self.totalStars; i++
+            {
+                let imageView = UIImageView()
+                imageView.contentMode = UIViewContentMode.ScaleAspectFill
+                var width = Int((cell.frame.width) / 5) * i
+                width = width + 20
+                var height = Int(cell.frame.height - 30)
+                imageView.frame = CGRect(x: width, y: height, width: 20, height: 20)
+                if i < starCount {
+                    imageView.image = UIImage(named: "star_active")
+                } else {
+                    imageView.image = UIImage(named: "star_inactive")
+                }
+                cell.addSubview(imageView)
+            }
+        }
+        
 
+        
+        
+        cell.TitleLabel.text = "\(title)"
         cell.DifficultyLabel.text = "\(stage) years old"
         
         var filePath = Utility.createFilePathInDocsDir(urlImageLocal as String)
@@ -140,6 +175,45 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
         }
     }
     
+    func getScoreData(){
+        var url = Constants.scoreDataUrl
+        println("Getting scores data from servers...")
+        getScoresJSON(url, token: self.access_token)
+    }
+    
+    func loadScoreData(){
+        var filePath = Utility.createFilePathInDocsDir("scores.plist")
+        var fileExists = Utility.checkIfFileExistsAtPath(filePath)
+        if fileExists {
+            println("Scores file exists...")
+            var data = Utility.loadJSONDataAtFilePath(filePath)
+            let myLearners = data["learners"] as! NSArray
+            println("Number of learners \(learners.count)")
+            for learner in myLearners {
+                var id = learner["id"] as? Int
+                if let lId = id {
+                    if let currentLearnerId = learnerID {
+                        if lId == currentLearnerId {
+                            var scores = learner["comprehension_scores"] as? NSArray
+                            if let myScores = scores {
+                                println("Setting learner scores...")
+                                self.learnerScores = myScores
+                            }
+                        }
+                    }
+                }
+            }
+            
+            
+            return;
+            
+            
+        } else {
+            println("Could not load the score data...")
+        }
+    }
+    
+    
     func getJSON(api:String, token: String, learner_id: Int) {
         let url = NSURL(string: api)!
         let request = NSMutableURLRequest(URL: url)
@@ -163,6 +237,32 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
         }
         task.resume()
     }
+
+    func getScoresJSON(api:String, token: String) {
+        let url = NSURL(string: api)!
+        let request = NSMutableURLRequest(URL: url)
+        request.addValue("application/json", forHTTPHeaderField: "Accept")
+        request.HTTPMethod = "GET"
+        request.addValue("Token token=\(token)", forHTTPHeaderField: "Authorization")
+        let session = NSURLSession.sharedSession()
+        let task = session.dataTaskWithRequest(request) { (data: NSData!, response: NSURLResponse!, error: NSError!) in
+            if error != nil {
+                println("Error hitting Scores API")
+                return
+            } else {
+                println("Received scores data...\(data)")
+                //println(NSString(data: data, encoding: NSUTF8StringEncoding))
+                var encodedJSON:NSDictionary = Utility.dataToJSON(data)
+                Utility.saveJSONWithArchiver(encodedJSON, savedName: "scores.plist")
+                self.loadScoreData()
+                //                self.ActivitySpinner.stopAnimating()
+                //                self.ActivitySpinner.hidden = true
+            }
+        }
+        task.resume()
+    }
+
+    
     
     func setLearnersData(){
         var filepath = Utility.createFilePathInDocsDir("userData.plist")

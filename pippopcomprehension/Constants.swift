@@ -13,6 +13,7 @@ struct Constants {
     static let homedir = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, .UserDomainMask, true)[0] as! String
     static let TokenUrl = "http://www.pippoplearning.com/api/v3/tokens"
     static let PerformancesUrl = "https://www.pippoplearning.com/api/v3/performances"
+    static let scoreDataUrl = "https://www.pippoplearning.com/api/v3/comprehensions/scores"
 
 }
 
