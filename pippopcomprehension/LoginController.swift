@@ -244,7 +244,14 @@ class LoginController:UIViewController, UITextFieldDelegate {
     }
     @IBAction func LoginButton(sender: AnyObject) {
         self.userFlow = "login"
-        self.FirstLoginUserFunction()
+        var connected: Bool = Reachability.isConnectedToNetwork()
+        if connected == false {
+            var alert = UIAlertController(title: "Uh oh!", message: "You need internet to login...", preferredStyle: UIAlertControllerStyle.Alert)
+            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil))
+            self.presentViewController(alert, animated: true, completion: nil)
+        } else {
+            self.FirstLoginUserFunction()
+        }
     }
 
     

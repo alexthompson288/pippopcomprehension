@@ -51,6 +51,7 @@ class QuestionViewController: UIViewController {
 
     
     override func viewDidLoad() {
+        ProgresBar.layer.cornerRadius = 10
         var audioVal = NSUserDefaults.standardUserDefaults().objectForKey("audio_instructions") as? Bool
         if let audioVal = audioVal {
             println("Autoplay instructions is \(audioVal)")
@@ -87,10 +88,16 @@ class QuestionViewController: UIViewController {
             case UISwipeGestureRecognizerDirection.Down:
                 println("Swiped down")
             case UISwipeGestureRecognizerDirection.Left:
-                println("Swiped down")
+                println("Swiped left")
+                pullViewToLeft()
                 self.index++
                 self.moviePlayer.stop()
-                setQuestion()
+                let delay = 0.1 * Double(NSEC_PER_SEC)
+                let time = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
+                dispatch_after(time, dispatch_get_main_queue()) {
+                    self.setQuestion()
+                }
+                
             default:
                 break
             }
@@ -115,6 +122,32 @@ class QuestionViewController: UIViewController {
         self.moviePlayer.stop()
     }
     
+    func pullViewToLeft(){
+        UIView.animateWithDuration(0.1, delay: 0.0, options: .CurveEaseInOut, animations: {
+            var viewframe = self.view.frame
+            viewframe.origin.x -= 80
+            self.view.frame = viewframe
+            println("View frame pull to left is \(self.view.frame)")
+            }, completion: { finished in
+                println("Animation complete!")
+        })
+    }
+    
+    func pullViewFromLeft(){
+        self.view.frame.origin.x = 40
+
+        UIView.animateWithDuration(0.9, delay: 0.0, options: .CurveEaseInOut, animations: {
+            var viewframe = self.view.frame
+            viewframe.origin.x = 0
+            self.view.frame = viewframe
+            println("View frame pull from left is \(self.view.frame)")
+
+            
+            }, completion: { finished in
+                println("Animation complete!")
+        })
+    }
+    
     
     
     func checkIfEnd() -> Bool{
@@ -129,6 +162,9 @@ class QuestionViewController: UIViewController {
     }
     
     func setQuestion(){
+        pullViewFromLeft()
+        view.userInteractionEnabled = true
+
         self.QuestionPageImage.image = nil
         self.QuestionImage.image = nil
         self.view.backgroundColor = UIColor.blackColor()
@@ -138,7 +174,7 @@ class QuestionViewController: UIViewController {
             var type = thisQuestion["page_type"] as! String
             if type == "question" {
                 println("Index is \(self.index)")
-                println("This question data is \(thisQuestion)")
+//                println("This question data is \(thisQuestion)")
                 var goodAnswer = thisQuestion["correct_answer"] as! String
                 var badAnswer1 = thisQuestion["incorrect_answer_1"] as! String
                 var badAnswer2 = thisQuestion["incorrect_answer_2"] as! String
@@ -152,6 +188,13 @@ class QuestionViewController: UIViewController {
                 self.answers.append(badAnswer2)
                 self.answers.append(badAnswer3)
                 var newAnswers = Utility.shuffle(self.answers)
+                
+                
+                Answer1Label.layer.backgroundColor = UIColor.yellowColor().CGColor
+                Answer2Label.layer.backgroundColor = UIColor.yellowColor().CGColor
+                Answer3Label.layer.backgroundColor = UIColor.yellowColor().CGColor
+                Answer4Label.layer.backgroundColor = UIColor.yellowColor().CGColor
+
                 
                 self.Answer1Label.hidden = false
                 self.Answer2Label.hidden = false
@@ -239,18 +282,23 @@ class QuestionViewController: UIViewController {
                     var urlpath: NSURL!
                     
 //                    IF VIDEO IS LOCAL SET LOCAL URL
+                    var videoIsLocal = false
                     var urlMediaLocal = self.thisQuestion["url_media_local"] as? String
                     if let urlMediaLocal = urlMediaLocal {
                         if urlMediaLocal != "" {
                             var mediaPath = Utility.createFilePathInDocsDir(urlMediaLocal)
-                            println("Inside image local. \(mediaPath)")
+                            println("Inside video local. \(mediaPath)")
                             var fileExists = Utility.checkIfFileExistsAtPath(mediaPath)
                             if fileExists == true {
+                                videoIsLocal = true
+                                println("File exists so setting url to local...")
                                 if let directoryURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0] as? NSURL {
                                     urlpath = directoryURL.URLByAppendingPathComponent(urlMediaLocal)
                                 }
                             } else {
+                                println("No local url. Setting remote...")
                                 //                    ELSE SET REMOTE URL
+                                videoIsLocal = false
                                 
                                 var urlMediaRemote = self.thisQuestion["url_media_remote"] as? String
                                 if let urlMediaRemote = urlMediaRemote {
@@ -258,21 +306,31 @@ class QuestionViewController: UIViewController {
                                         urlpath = NSURL(string: urlMediaRemote)!
                                     }
                                 }
+                                
                             }
                         }
                     }
                     
                     
 //                    PLAY VIDEO FILE
+                    var connected: Bool = Reachability.isConnectedToNetwork()
                     
-                    self.moviePlayer.stop()
-                    println("Playing video. Url path is \(urlpath)")
-                    self.moviePlayer = MPMoviePlayerController(contentURL: urlpath!)
-                    self.moviePlayer.view.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
-                    self.view.addSubview(self.moviePlayer.view)
-                    self.moviePlayer.controlStyle = MPMovieControlStyle.Fullscreen
-                    self.moviePlayer.fullscreen = true
-//                        self.moviePlayer.play()
+                    
+                    if videoIsLocal == false && connected == false {
+                        var alert = UIAlertController(title: "Uh oh!", message: "You need internet to stream this video...", preferredStyle: UIAlertControllerStyle.Alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil))
+                        self.presentViewController(alert, animated: true, completion: nil)
+                    } else {
+                        self.moviePlayer.stop()
+                        println("Playing video. Url path is \(urlpath)")
+                        self.moviePlayer = MPMoviePlayerController(contentURL: urlpath!)
+                        self.moviePlayer.view.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+                        self.view.addSubview(self.moviePlayer.view)
+                        self.moviePlayer.controlStyle = MPMovieControlStyle.Fullscreen
+                        self.moviePlayer.fullscreen = true
+                        //                        self.moviePlayer.play()
+
+                    }
                     
                 } else if self.mediatype == "audio" {
 //                    WE HAVE AUDIO
@@ -385,53 +443,101 @@ class QuestionViewController: UIViewController {
     
     @IBAction func Answer1Button(sender: AnyObject) {
         println("Answer 1 chosen")
+        view.userInteractionEnabled = false
         if Answer1Label.titleLabel?.text == correctAnswer {
             println("Correct!")
             self.score++
+            self.Answer1Label.layer.backgroundColor = UIColor.greenColor().CGColor
+        } else {
+            self.Answer1Label.layer.backgroundColor = UIColor.redColor().CGColor
         }
-        var answer = Answer1Label.titleLabel?.text
-        addQuestionToUserQuestions(answer!)
         self.index++
+        var answer = Answer1Label.titleLabel?.text
+        Answer1Label.titleLabel!.textColor = UIColor.whiteColor()
+        addQuestionToUserQuestions(answer!)
+        let delay = 0.5 * Double(NSEC_PER_SEC)
+        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
+        dispatch_after(time, dispatch_get_main_queue()) {
+            self.setQuestion()
+        }
         
-        setQuestion()
+        
+        
     }
     
     @IBAction func Answer2Button(sender: AnyObject) {
+        view.userInteractionEnabled = false
+
         println("Answer 2 chosen")
         if Answer2Label.titleLabel?.text == correctAnswer {
             println("Correct!")
             self.score++
+            self.Answer2Label.layer.backgroundColor = UIColor.greenColor().CGColor
+        } else {
+            self.Answer2Label.layer.backgroundColor = UIColor.redColor().CGColor
         }
+
         var answer = Answer2Label.titleLabel?.text
+        Answer2Label.titleLabel!.textColor = UIColor.whiteColor()
         addQuestionToUserQuestions(answer!)
         self.index++
-        setQuestion()
+        let delay = 0.5 * Double(NSEC_PER_SEC)
+        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
+        dispatch_after(time, dispatch_get_main_queue()) {
+            self.setQuestion()
+        }
     }
     
     
     @IBAction func Answer3Button(sender: AnyObject) {
+        view.userInteractionEnabled = false
+
         println("Answer 3 chosen")
         if Answer3Label.titleLabel?.text == correctAnswer {
             println("Correct!")
             self.score++
+            self.Answer3Label.layer.backgroundColor = UIColor.greenColor().CGColor
+        } else {
+            self.Answer3Label.layer.backgroundColor = UIColor.redColor().CGColor
         }
+        Answer3Label.titleLabel!.textColor = UIColor.whiteColor()
         var answer = Answer3Label.titleLabel?.text
         addQuestionToUserQuestions(answer!)
         self.index++
-        setQuestion()
+        let delay = 0.5 * Double(NSEC_PER_SEC)
+        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
+        dispatch_after(time, dispatch_get_main_queue()) {
+            self.setQuestion()
+        }
     }
     
     @IBAction func Answer4Button(sender: AnyObject) {
+        view.userInteractionEnabled = false
+
         println("Answer 4 chosen")
         if Answer4Label.titleLabel?.text == correctAnswer {
             println("Correct!")
             self.score++
+            self.Answer4Label.layer.backgroundColor = UIColor.greenColor().CGColor
+        } else {
+            self.Answer4Label.layer.backgroundColor = UIColor.redColor().CGColor
         }
+        Answer4Label.titleLabel!.textColor = UIColor.whiteColor()
+
         var answer = Answer4Label.titleLabel?.text
         addQuestionToUserQuestions(answer!)
         self.index++
-        setQuestion()
+        let delay = 0.5 * Double(NSEC_PER_SEC)
+        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
+        dispatch_after(time, dispatch_get_main_queue()) {
+            self.setQuestion()
+        }
     }
+    
+    func animateCorrect(){
+        
+    }
+    
     
     func addQuestionToUserQuestions(answer: String){
         let question = self.thisQuestion["question"] as! String

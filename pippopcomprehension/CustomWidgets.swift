@@ -38,6 +38,18 @@ class MyCustomButton: UIButton {
     }
 }
 
+class CustomAnswerButton: UIButton{
+    required init(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        self.layer.cornerRadius = 8
+        self.layer.backgroundColor = UIColor.yellowColor().CGColor
+        self.titleLabel?.lineBreakMode = NSLineBreakMode.ByWordWrapping
+        self.titleLabel?.textAlignment = NSTextAlignment.Center
+
+    }
+}
+
+
 class RoundedCornerView: UIView {
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
