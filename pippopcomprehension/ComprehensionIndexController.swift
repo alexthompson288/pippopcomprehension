@@ -385,7 +385,7 @@ class ComprehensionsIndexController: UIViewController, UICollectionViewDelegate,
     }
     
     @IBAction func GoToSettingsButton(sender: AnyObject) {
-        var svc:SettingsController = self.storyboard?.instantiateViewControllerWithIdentifier("SettingsControllerId") as! SettingsController
+        var svc:SettingsTableController = self.storyboard?.instantiateViewControllerWithIdentifier("SettingsTableControllerId") as! SettingsTableController
         svc.learners = self.learners
         if let name = self.learnerName {
             svc.learnerName = name

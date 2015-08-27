@@ -220,17 +220,28 @@ class QuestionViewController: UIViewController {
                 self.Answer3Label.setTitle(newAnswers[2], forState: .Normal)
                 self.Answer4Label.setTitle(newAnswers[3], forState: .Normal)
                 var imgLocal: String? = thisQuestion["url_image_local"] as? String
+                var imageIsLocal = false
                 if let urlImageLocal = imgLocal {
                     if urlImageLocal != ""{
                         println("Local image name is ...\(urlImageLocal)")
                         var filePath = Utility.createFilePathInDocsDir(urlImageLocal as String)
                         var fileExists = Utility.checkIfFileExistsAtPath(filePath)
                         if fileExists == true {
+                            imageIsLocal = true
                             println("Image is saved locally - called \(filePath)")
                             self.QuestionPageImage.image = UIImage(named: filePath)
                         } else {
+                            imageIsLocal = false
                             println("Unable to find image. Will write to write from network")
-                            writeImagesLocally(thisQuestion)
+                            var connected: Bool = Reachability.isConnectedToNetwork()
+                            if imageIsLocal == false && connected == false {
+                                var alert = UIAlertController(title: "Uh oh!", message: "You need internet to see this...", preferredStyle: UIAlertControllerStyle.Alert)
+                                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil))
+                                self.presentViewController(alert, animated: true, completion: nil)
+                            } else {
+                                println("Image is not loca and connected to internet...")
+                                writeImagesLocally(thisQuestion)
+                            }
                         }
                         
                     } else {
@@ -294,6 +305,7 @@ class QuestionViewController: UIViewController {
                                 println("File exists so setting url to local...")
                                 if let directoryURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0] as? NSURL {
                                     urlpath = directoryURL.URLByAppendingPathComponent(urlMediaLocal)
+                                    self.PlayMediaLabel.hidden = false
                                 }
                             } else {
                                 println("No local url. Setting remote...")
@@ -304,6 +316,9 @@ class QuestionViewController: UIViewController {
                                 if let urlMediaRemote = urlMediaRemote {
                                     if urlMediaRemote != ""{
                                         urlpath = NSURL(string: urlMediaRemote)!
+                                        self.PlayMediaLabel.hidden = false
+                                    } else {
+                                        self.PlayMediaLabel.hidden = true
                                     }
                                 }
                                 
@@ -328,6 +343,7 @@ class QuestionViewController: UIViewController {
                         self.view.addSubview(self.moviePlayer.view)
                         self.moviePlayer.controlStyle = MPMovieControlStyle.Fullscreen
                         self.moviePlayer.fullscreen = true
+                        self.PlayMediaLabel.hidden = false
                         //                        self.moviePlayer.play()
 
                     }
@@ -347,6 +363,7 @@ class QuestionViewController: UIViewController {
                                 if fileExists == true {
                                     if let directoryURL = NSFileManager.defaultManager().URLsForDirectory(.DocumentDirectory, inDomains: .UserDomainMask)[0] as? NSURL {
                                         urlpath = directoryURL.URLByAppendingPathComponent(urlMediaLocal)
+                                        self.PlayMediaLabel.hidden = false
                                     }
                                 } else {
                                     
@@ -355,6 +372,10 @@ class QuestionViewController: UIViewController {
                                     if let urlMediaRemote = urlMediaRemote {
                                         if urlMediaRemote != ""{
                                             urlpath = NSURL(string: urlMediaRemote)!
+                                            self.PlayMediaLabel.hidden = false
+
+                                        } else {
+                                            self.PlayMediaLabel.hidden = true
                                         }
                                     }
                                 }
@@ -376,14 +397,24 @@ class QuestionViewController: UIViewController {
                 
                 var urlImageLocal: NSString = thisQuestion["url_image_local"] as! NSString
                 println("Local image name is ...\(urlImageLocal)")
+                
+                var imageIsLocal = false
                 var filePath = Utility.createFilePathInDocsDir(urlImageLocal as String)
                 var fileExists = Utility.checkIfFileExistsAtPath(filePath)
                 if fileExists == true {
+                    imageIsLocal = true
                     println("Image is saved locally - called \(filePath)")
                     self.QuestionImage.image = UIImage(named: filePath)
                 } else {
-                    println("Unable to find image. Will write to write from network")
-                    writeImagesLocally(thisQuestion)
+                    var connected: Bool = Reachability.isConnectedToNetwork()
+                    if imageIsLocal == false && connected == false {
+                        var alert = UIAlertController(title: "Uh oh!", message: "You need internet to see this...", preferredStyle: UIAlertControllerStyle.Alert)
+                        alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil))
+                        self.presentViewController(alert, animated: true, completion: nil)
+                    } else {
+                        println("Unable to find image. Will write to write from network")
+                        writeImagesLocally(thisQuestion)
+                    }
                 }
                 
 

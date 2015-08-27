@@ -34,19 +34,21 @@ class SettingsTableController: UITableViewController {
         }
         
     }
+    @IBOutlet weak var LearnerNameLabel: UILabel!
     
     @IBOutlet weak var InstructionAutoplaySwitch: UISwitch!
-    
     @IBAction func UpdateData(sender: AnyObject) {
         var url = Constants.apiUrl
         println("Getting JSON FROM SERVER FOR BOOKS")
         getJSON(url, token: self.access_token, learner_id: self.learner_id)
     }
     
+    
     func updateUI(){
-        self.LearnerNameLabel.text = learnerName
+        self.LearnerNameLabel.text = "Logged in as \(learnerName)"
         self.InstructionAutoplaySwitch.setOn(autoplay, animated: true)
     }
+    
     @IBAction func SwitchAutoplayInstructions(sender: AnyObject) {
         if self.InstructionAutoplaySwitch.on {
             println("Switch on")
@@ -56,8 +58,6 @@ class SettingsTableController: UITableViewController {
             NSUserDefaults.standardUserDefaults().setObject(false, forKey: "audio_instructions")
         }
     }
-    
-    @IBOutlet weak var LearnerNameLabel: UILabel!
     
     @IBAction func LogoutButton(sender: AnyObject) {
         NSUserDefaults.standardUserDefaults().removeObjectForKey("email")
@@ -70,7 +70,6 @@ class SettingsTableController: UITableViewController {
         
         var vc: LoginController = self.storyboard?.instantiateViewControllerWithIdentifier("LoginControllerID") as! LoginController
         presentViewController(vc, animated: true, completion: nil)
-        
     }
     
     @IBAction func ChangeLearnerButton(sender: AnyObject) {

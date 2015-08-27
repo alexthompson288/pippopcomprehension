@@ -24,73 +24,28 @@ var connected:Bool!
 
 class LoginController:UIViewController, UITextFieldDelegate {
     
-    @IBOutlet weak var ParentQuestionLabel: UILabel!
+    
     @IBOutlet weak var ErrorLabel: UILabel!
     @IBOutlet weak var PasswordField: UITextField!
     @IBOutlet weak var EmailField: UITextField!
-    @IBOutlet weak var LoginFieldsView: UIView!
-    
     @IBOutlet weak var LoginButtonLabel: UIButton!
     @IBOutlet weak var ActivityIndicator: UIActivityIndicatorView!
-    @IBOutlet weak var ParentGateView: UIView!
-   
     
-    @IBAction func ParentTriangleButton(sender: AnyObject) {
-        if self.shape == "triangle"{
-            println("Correct")
-            self.parentPass = true
-            self.ParentGateView.hidden = true
-            self.continueUserFlow()
-        } else {
-            println("Wrong")
-            self.ParentGateView.hidden = true
-        }
+    
+    var EmailField1 = UITextField()
+    var ErrorField1 = UILabel()
+    
+    @IBOutlet weak var TermsLabel: UIButton!
+    @IBOutlet weak var ForgottenPasswordLabel: UIButton!
+    
+    @IBAction func TermsButton(sender: AnyObject) {
+        UIApplication.sharedApplication().openURL(NSURL(string: "https://www.pippoplearning.com/termsandprivacy.pdf")!)
     }
     
-    @IBAction func ParentCircleButton(sender: AnyObject) {
-        if self.shape == "circle"{
-            println("Correct")
-            self.parentPass = true
-            self.ParentGateView.hidden = true
-            self.continueUserFlow()
-        } else {
-            println("Wrong")
-            self.ParentGateView.hidden = true
-        }
-    }
-    
-    @IBAction func ParentSquareButton(sender: AnyObject) {
-        if self.shape == "square"{
-            println("Correct")
-            self.parentPass = true
-            self.ParentGateView.hidden = true
-            self.continueUserFlow()
-        } else {
-            println("Wrong")
-            self.ParentGateView.hidden = true
-        }
+    @IBAction func ForgottenPassword(sender: AnyObject) {
+        UIApplication.sharedApplication().openURL(NSURL(string: "https://www.pippoplearning.com/accounts/password/new")!)
     }
    
-    
-    func continueUserFlow(){
-        println("User flow is \(self.userFlow)")
-        if self.userFlow == "login" {
-            println("About to run first login function")
-            FirstLoginUserFunction()
-        } else if self.userFlow == "register" {
-            println("About to run first register function")
-        } else if self.userFlow == "forgottenpassword" {
-            println("About to run first forgotten password function")
-            showForgottenPassword()
-        } else if self.userFlow == "terms" {
-            showTerms()
-        }
-    }
-    
-    var userFlow = "login"
-    var parentPass = false
-    var shapes = ["circle","square","triangle"]
-    var shape = ""
     var visible:CGFloat = 1.0
     var invisible:CGFloat = 0.0
     var moviePlayer = MPMoviePlayerController()
@@ -112,28 +67,66 @@ class LoginController:UIViewController, UITextFieldDelegate {
     
     override func viewDidLoad() {
         setAudioInstructionBool()
-        self.ParentGateView.hidden = true
         println("Login view loaded...")
 //        self.LoginFieldsView.layer.borderWidth = 3.0
 //        self.LoginFieldsView.layer.borderColor = UIColor.redColor().CGColor
 //        self.LoginFieldsView.layer.cornerRadius = 5.0
         playCorrectVideo()
-        self.ErrorLabel.hidden = true
-        self.PasswordField.delegate = self
-        self.EmailField.delegate = self
         self.loginScreen = true
         println("Login controller")
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardDidShow", name: UIKeyboardDidShowNotification, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardDidHide", name: UIKeyboardDidHideNotification, object: nil)
-        var tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: "hideParentGate")
-        view.addGestureRecognizer(tap)
+
+        setUpUI()
     }
     
-    func hideParentGate(){
-        println("Tap...")
-        self.ParentGateView.hidden = true
+    
+    func setUpUI(){
+        
+        let imageView = UIImageView()
+        imageView.contentMode = UIViewContentMode.ScaleAspectFit
+        
+        imageView.image = UIImage(named: "pippop_logo_large")
+        
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            imageView.frame = CGRect(x: 5, y: 5, width: 200, height: 80)
+        } else {
+            imageView.frame = CGRect(x: 5, y: 5, width: 100, height: 40)
+        }
+        
+        println("image frame is \(imageView.frame)")
+        self.view.addSubview(imageView)
+        
+        self.view.setNeedsDisplay()
+        
+        playCorrectVideo()
+    
     }
+    
+    func playCorrectVideo(){
+        var device = UIDevice.currentDevice().userInterfaceIdiom
+        var urlpath: NSURL!
+        if device == .Pad {
+            println("Using iPad")
+            urlpath = NSBundle.mainBundle().URLForResource("iPadLoginVideo", withExtension: "mp4")
+        } else  {
+            println("Using iPhone")
+            urlpath = NSBundle.mainBundle().URLForResource("iPhoneLoginVideo", withExtension: "mp4")
+        }
+//NEED TO PUT ALL UI ELEMENTS ON ANOTHER VIEW TO SEE THE VIDEO
+//        println("url path is \(urlpath)")
+//        self.moviePlayer = MPMoviePlayerController(contentURL: urlpath!)
+//        self.moviePlayer.shouldAutoplay = true
+//        self.moviePlayer.setFullscreen(false, animated: true)
+//        self.moviePlayer.controlStyle = MPMovieControlStyle.None
+//        self.moviePlayer.scalingMode = MPMovieScalingMode.AspectFit
+//        self.moviePlayer.repeatMode = MPMovieRepeatMode.One
+//        self.moviePlayer.view.frame = self.view.bounds
+//        self.view.addSubview(self.moviePlayer.view)
+//        self.view.sendSubviewToBack(moviePlayer.view)
+    }
+    
     
     func keyboardDidShow(){
         self.LoginButtonLabel.hidden = true
@@ -160,6 +153,9 @@ class LoginController:UIViewController, UITextFieldDelegate {
 
     }
     
+    @IBAction func LoginButton(sender: AnyObject) {
+        FirstLoginUserFunction()
+    }
     
     func checkAccessExpiration(){
         var val = NSUserDefaults.standardUserDefaults().objectForKey("access_expiration") as? String
@@ -191,29 +187,6 @@ class LoginController:UIViewController, UITextFieldDelegate {
     }
     
     
-    func playCorrectVideo(){
-        var device = UIDevice.currentDevice().userInterfaceIdiom
-        var urlpath: NSURL!
-        if device == .Pad {
-            println("Using iPad")
-            urlpath = NSBundle.mainBundle().URLForResource("iPadLoginVideo", withExtension: "mp4")
-        } else  {
-            println("Using iPhone")
-            urlpath = NSBundle.mainBundle().URLForResource("iPhoneLoginVideo", withExtension: "mp4")
-        }
-        
-        println("url path is \(urlpath)")
-//        self.moviePlayer = MPMoviePlayerController(contentURL: urlpath!)
-//        self.moviePlayer.shouldAutoplay = true
-//        self.moviePlayer.setFullscreen(false, animated: true)
-//        self.moviePlayer.controlStyle = MPMovieControlStyle.None
-//        self.moviePlayer.scalingMode = MPMovieScalingMode.AspectFit
-//        self.moviePlayer.repeatMode = MPMovieRepeatMode.One
-//        self.moviePlayer.view.frame = self.view.bounds
-//        self.view.addSubview(self.moviePlayer.view)
-//        self.view.sendSubviewToBack(moviePlayer.view)
-    }
-    
     override func viewDidAppear(animated: Bool) {
         self.ErrorLabel.hidden = true
         self.ActivityIndicator.hidesWhenStopped = true
@@ -231,28 +204,6 @@ class LoginController:UIViewController, UITextFieldDelegate {
     func updateUI(){
         
     }
-    
-    @IBAction func TermsButton(sender: AnyObject) {
-        self.userFlow = "terms"
-        println("Changing user flow to terms: \(self.userFlow)")
-        showParentGate()
-    }
-    
-    @IBAction func ForgottenPasswordButton(sender: AnyObject) {
-        self.userFlow = "forgottenpassword"
-        self.showParentGate()
-    }
-    @IBAction func LoginButton(sender: AnyObject) {
-        self.userFlow = "login"
-        var connected: Bool = Reachability.isConnectedToNetwork()
-        if connected == false {
-            var alert = UIAlertController(title: "Uh oh!", message: "You need internet to login...", preferredStyle: UIAlertControllerStyle.Alert)
-            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil))
-            self.presentViewController(alert, animated: true, completion: nil)
-        } else {
-            self.FirstLoginUserFunction()
-        }
-    }
 
     
     func FirstLoginUserFunction(){
@@ -263,7 +214,14 @@ class LoginController:UIViewController, UITextFieldDelegate {
             self.ErrorLabel.hidden = false
             self.ErrorLabel.text = "Fill in password"
         } else {
-            LogUserInRemote(self.EmailField.text, password: self.PasswordField.text)
+            var connected: Bool = Reachability.isConnectedToNetwork()
+            if connected == false {
+                var alert = UIAlertController(title: "Uh oh!", message: "You need internet to login...", preferredStyle: UIAlertControllerStyle.Alert)
+                alert.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Default, handler: nil))
+                self.presentViewController(alert, animated: true, completion: nil)
+            } else {
+                LogUserInRemote(self.EmailField.text, password: self.PasswordField.text)
+            }
         }
     }
     
@@ -275,13 +233,6 @@ class LoginController:UIViewController, UITextFieldDelegate {
         println("Pressed return")
         textField.resignFirstResponder()
         self.view.endEditing(true)
-        if self.loginScreen == true {
-            self.userFlow = "login"
-            showParentGate()
-        } else {
-            self.userFlow = "register"
-            showParentGate()
-        }
         
         return true
     }
@@ -377,21 +328,8 @@ class LoginController:UIViewController, UITextFieldDelegate {
             self.ErrorLabel.text = "No internet..."
         }
     }
+
     
-    func showParentGate() {
-        self.ParentGateView.hidden = false
-        var newShapes = Utility.shuffle(self.shapes)
-        self.shape = newShapes[0]
-        self.ParentQuestionLabel.text = "Touch the \(newShapes[0])"
-    }
-    
-    func showForgottenPassword(){
-        UIApplication.sharedApplication().openURL(NSURL(string: "https://www.pippoplearning.com/accounts/password/new")!)
-    }
-    
-    func showTerms(){
-        UIApplication.sharedApplication().openURL(NSURL(string: "https://www.pippoplearning.com/termsandprivacy.pdf")!)
-    }
     
     override func supportedInterfaceOrientations() -> Int {
         return Int(UIInterfaceOrientationMask.Landscape.rawValue)
